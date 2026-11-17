@@ -148,6 +148,7 @@ namespace NetScriptFramework
 		{
 		public:
 			static NetScriptFramework::CachedVid VID10878;
+			static NetScriptFramework::CachedVid VID11213;
 			static NetScriptFramework::CachedVid VID11275;
 			static NetScriptFramework::CachedVid VID11433;
 			static NetScriptFramework::CachedVid VID11435;
@@ -219,6 +220,7 @@ namespace NetScriptFramework
 			static NetScriptFramework::CachedVid VID36607;
 			static NetScriptFramework::CachedVid VID36727;
 			static NetScriptFramework::CachedVid VID36877;
+			static NetScriptFramework::CachedVid VID36976;
 			static NetScriptFramework::CachedVid VID37513;
 			static NetScriptFramework::CachedVid VID37596;
 			static NetScriptFramework::CachedVid VID37672;
@@ -406,6 +408,7 @@ namespace NetScriptFramework
 			static NetScriptFramework::CachedVid VID73884;
 			static NetScriptFramework::CachedVid VID74038;
 			static NetScriptFramework::CachedVid VID74039;
+			static NetScriptFramework::CachedVid VID75973;
 			static NetScriptFramework::CachedVid VID76160;
 			static NetScriptFramework::CachedVid VID76258;
 			static NetScriptFramework::CachedVid VID76261;
@@ -453,6 +456,7 @@ namespace NetScriptFramework
 			static void _Init1()
 			{
 				VID10878 = NetScriptFramework::CachedVid::TryInitialize(10878, 0, 0, nullptr);
+				VID11213 = NetScriptFramework::CachedVid::TryInitialize(11213, 0, 0, nullptr);
 				VID11275 = NetScriptFramework::CachedVid::TryInitialize(11275, 0, 0, nullptr);
 				VID11433 = NetScriptFramework::CachedVid::TryInitialize(11433, 0, 0, nullptr);
 				VID11435 = NetScriptFramework::CachedVid::TryInitialize(11435, 0, 0, nullptr);
@@ -524,6 +528,7 @@ namespace NetScriptFramework
 				VID36607 = NetScriptFramework::CachedVid::TryInitialize(36607, 0, 0, nullptr);
 				VID36727 = NetScriptFramework::CachedVid::TryInitialize(36727, 0, 0, nullptr);
 				VID36877 = NetScriptFramework::CachedVid::TryInitialize(36877, 0, 0, nullptr);
+				VID36976 = NetScriptFramework::CachedVid::TryInitialize(36976, 0, 0, nullptr);
 				VID37513 = NetScriptFramework::CachedVid::TryInitialize(37513, 0, 0, nullptr);
 				VID37596 = NetScriptFramework::CachedVid::TryInitialize(37596, 0, 0, nullptr);
 				VID37672 = NetScriptFramework::CachedVid::TryInitialize(37672, 0, 0, nullptr);
@@ -711,6 +716,7 @@ namespace NetScriptFramework
 				VID73884 = NetScriptFramework::CachedVid::TryInitialize(73884, 0, 0, nullptr);
 				VID74038 = NetScriptFramework::CachedVid::TryInitialize(74038, 0, 0, nullptr);
 				VID74039 = NetScriptFramework::CachedVid::TryInitialize(74039, 0, 0, nullptr);
+				VID75973 = NetScriptFramework::CachedVid::TryInitialize(75973, 0, 0, nullptr);
 				VID76160 = NetScriptFramework::CachedVid::TryInitialize(76160, 0, 0, nullptr);
 				VID76258 = NetScriptFramework::CachedVid::TryInitialize(76258, 0, 0, nullptr);
 				VID76261 = NetScriptFramework::CachedVid::TryInitialize(76261, 0, 0, nullptr);

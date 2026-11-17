@@ -14851,24 +14851,6 @@ namespace NetScriptFramework
 			}
 		};
 
-		public interface class GrassManager : public NetScriptFramework::IMemoryObject
-		{
-		public:
-			property System::Byte GenerateGrassDataFiles
-			{
-				System::Byte __clrcall get();
-
-				void __clrcall set(System::Byte value);
-			}
-
-			property System::Byte EnableGrass
-			{
-				System::Byte __clrcall get();
-
-				void __clrcall set(System::Byte value);
-			}
-		};
-
 		public enum class UserEventFlags : System::UInt32
 		{
 			None = 0,
@@ -37733,53 +37715,6 @@ namespace NetScriptFramework
 			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
 		};
 
-		public interface class hkpWorldObject : public hkReferencedObject, public NetScriptFramework::IVirtualObject
-		{
-		public:
-			enum class BroadPhaseType : System::Int32
-			{
-				BROAD_PHASE_INVALID = 0,
-				BROAD_PHASE_ENTITY = 1,
-				BROAD_PHASE_PHANTOM = 2,
-				BROAD_PHASE_BORDER = 3,
-				BROAD_PHASE_MAX_ID = 4,
-			};
-
-			interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
-
-			enum class MtChecks : System::Int32
-			{
-				MULTI_THREADING_CHECKS_ENABLE = 0,
-				MULTI_THREADING_CHECKS_IGNORE = 1,
-			};
-
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-
-			property hkpWorld^ m_world
-			{
-				hkpWorld^ __clrcall get();
-
-				void __clrcall set(hkpWorld^ value);
-			}
-
-			property System::UInt64 m_userData
-			{
-				System::UInt64 __clrcall get();
-
-				void __clrcall set(System::UInt64 value);
-			}
-
-			property hkpLinkedCollidable^ m_collidable
-			{
-				hkpLinkedCollidable^ __clrcall get();
-			}
-
-			property hkStringPtr^ m_name
-			{
-				hkStringPtr^ __clrcall get();
-			}
-		};
-
 		public interface class hkpDynamicsContactMgr : public hkpContactMgr, public NetScriptFramework::IVirtualObject
 		{
 		public:
@@ -37833,14 +37768,6 @@ namespace NetScriptFramework
 		public interface class hkpKdTreeWorldManager : public hkpTreeWorldManager, public hkpEntityListener, public hkpPhantomListener, public NetScriptFramework::IVirtualObject
 		{
 		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		public interface class hkpPhantom : public hkpWorldObject, public NetScriptFramework::IVirtualObject
-		{
-		public:
-			interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
-
 			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
 		};
 
@@ -37901,54 +37828,6 @@ namespace NetScriptFramework
 			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
 		};
 
-		interface class hkWorldOperation::AddReference : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		interface class hkWorldOperation::RemoveReference : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		interface class hkWorldOperation::SetWorldObjectShape : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		interface class hkWorldOperation::UpdateWorldObjectShape : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		public interface class hkpShapePhantom : public hkpPhantom, public NetScriptFramework::IVirtualObject
-		{
-		public:
-			interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
-
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		public interface class hkpBroadPhaseBorder : public hkReferencedObject, public hkpWorldDeletionListener, public hkpPhantomOverlapListener, public hkpWorldPostSimulationListener, public NetScriptFramework::IVirtualObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		public interface class hkpAabbPhantom : public hkpPhantom, public NetScriptFramework::IVirtualObject
-		{
-		public:
-			interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
-
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-
-			interface class OrderByUid : public NetScriptFramework::IMemoryObject { };
-		};
-
 		public interface class hkpMultiThreadedSimulation : public hkpContinuousSimulation, public NetScriptFramework::IVirtualObject
 		{
 		public:
@@ -37957,18 +37836,6 @@ namespace NetScriptFramework
 			interface class MtEntityEntityBroadPhaseListener : public hkpBroadPhaseListener, public NetScriptFramework::IVirtualObject { };
 
 			interface class MtPhantomBroadPhaseListener : public hkpBroadPhaseListener, public NetScriptFramework::IVirtualObject { };
-		};
-
-		public interface class hkpCollidableAddedEvent : public NetScriptFramework::IMemoryObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		public interface class hkpCollidableRemovedEvent : public NetScriptFramework::IMemoryObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
 		};
 
 		public interface class hkpManifoldPointAddedEvent : public hkpContactPointAddedEvent, public NetScriptFramework::IMemoryObject
@@ -38002,138 +37869,6 @@ namespace NetScriptFramework
 		};
 
 		interface class hkSpuCollisionCallbackUtil::ContactPointRemovedEvent : public hkSpuCollisionCallbackUtil::Event, public NetScriptFramework::IMemoryObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		interface class hkWorldOperation::AddPhantom : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		interface class hkWorldOperation::AddPhantomBatch : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		interface class hkWorldOperation::RemovePhantom : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		interface class hkWorldOperation::RemovePhantomBatch : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		interface class hkWorldOperation::UpdateFilterOnPhantom : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		interface class hkWorldOperation::UpdatePhantomBP : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		public interface class hkpCharacterProxy : public hkReferencedObject, public hkpEntityListener, public hkpPhantomListener, public NetScriptFramework::IVirtualObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		interface class BGSWaterCollisionManager::bshkAutoWater : public hkpAabbPhantom, public BGSWaterCollisionManager::BGSWaterUpdateI, public NetScriptFramework::IVirtualObject { };
-
-		public interface class hkpCharacterProxyCinfo : public hkpCharacterControllerCinfo, public NetScriptFramework::IVirtualObject
-		{
-		public:
-			interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
-
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		interface class hkaDetectRagdollPenetration::Setup : public NetScriptFramework::IMemoryObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		public interface class hkAvoidBox : public hkpAabbPhantom, public NetScriptFramework::IVirtualObject { };
-
-		public interface class hkpCachingShapePhantom : public hkpShapePhantom, public NetScriptFramework::IVirtualObject
-		{
-		public:
-			interface class CollisionDetail : public NetScriptFramework::IMemoryObject
-			{
-			public:
-				interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-			};
-
-			interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
-
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-
-			interface class OrderByUid : public NetScriptFramework::IMemoryObject { };
-		};
-
-		public interface class hkpSimpleShapePhantom : public hkpShapePhantom, public NetScriptFramework::IVirtualObject
-		{
-		public:
-			interface class CollisionDetail : public NetScriptFramework::IMemoryObject
-			{
-			public:
-				interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
-
-				interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-			};
-
-			interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
-
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-
-			interface class OrderByUid : public NetScriptFramework::IMemoryObject { };
-		};
-
-		interface class hkpVehicleLinearCastWheelCollide::WheelState : public NetScriptFramework::IMemoryObject
-		{
-		public:
-			interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
-
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		public interface class hkpVehicleRayCastWheelCollide : public hkpVehicleWheelCollide, public NetScriptFramework::IVirtualObject
-		{
-		public:
-			interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
-
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		public interface class hkpWindRegion : public hkReferencedObject, public hkpWorldPostSimulationListener, public NetScriptFramework::IVirtualObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		public interface class ahkpCharacterProxy : public hkpCharacterProxy, public NetScriptFramework::IVirtualObject { };
-
-		public interface class bhkCharacterProxyCinfo : public hkpCharacterProxyCinfo, public hkSerializableCinfo, public NetScriptFramework::IVirtualObject { };
-
-		public interface class hkpCharacterProxyIntegrateCommand : public NetScriptFramework::IMemoryObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
-		interface class hkpCharacterProxyJobUtil::CharacterJobBatch : public NetScriptFramework::IMemoryObject
 		{
 		public:
 			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
@@ -38825,12 +38560,6 @@ namespace NetScriptFramework
 			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
 		};
 
-		public interface class hkpCharacterProxyIntegrateJob : public hkpCharacterProxyJob, public NetScriptFramework::IMemoryObject
-		{
-		public:
-			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
-		};
-
 		public interface class hkpWorldGetClosestPointsJob : public hkpCollisionQueryJob, public NetScriptFramework::IMemoryObject
 		{
 		public:
@@ -38917,6 +38646,472 @@ namespace NetScriptFramework
 		{
 		public:
 			interface class Edge : public NetScriptFramework::IMemoryObject { };
+		};
+
+		interface class hkpPhantom;
+
+		public interface class hkpBroadPhaseBorder : public hkReferencedObject, public hkpWorldDeletionListener, public hkpPhantomOverlapListener, public hkpWorldPostSimulationListener, public NetScriptFramework::IVirtualObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		public interface class hkpCollidableAddedEvent : public NetScriptFramework::IMemoryObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		public interface class hkpCollidableRemovedEvent : public NetScriptFramework::IMemoryObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		interface class hkWorldOperation::AddPhantom : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		interface class hkWorldOperation::AddPhantomBatch : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		interface class hkWorldOperation::RemovePhantom : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		interface class hkWorldOperation::RemovePhantomBatch : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		interface class hkWorldOperation::UpdateFilterOnPhantom : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		interface class hkWorldOperation::UpdatePhantomBP : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		interface class NiAVObject;
+
+		public interface class SkyObject : public NetScriptFramework::IVirtualObject
+		{
+		public:
+			property NiPointer<NiAVObject^>^ RootNode
+			{
+				NiPointer<NiAVObject^>^ __clrcall get();
+			}
+		};
+
+		public interface class NiCollisionObject : public NiObject, public NetScriptFramework::IVirtualObject
+		{
+		public:
+			/// <summary>
+			/// Gets the owner object or node.
+			/// </summary>
+			property NiAVObject^ OwnerObject
+			{
+				NiAVObject^ __clrcall get();
+			}
+		};
+
+		public interface class ImageSpaceModifierInstance : public NiObject, public NetScriptFramework::IVirtualObject
+		{
+		public:
+			property System::Single Strength
+			{
+				System::Single __clrcall get();
+			}
+
+			property NiPointer<NiAVObject^>^ Target
+			{
+				NiPointer<NiAVObject^>^ __clrcall get();
+			}
+
+			property System::Single Age
+			{
+				System::Single __clrcall get();
+			}
+
+			property System::UInt32 ModifierInstanceFlags
+			{
+				System::UInt32 __clrcall get();
+			}
+		};
+
+		public interface class hkpWorldObject : public hkReferencedObject, public NetScriptFramework::IVirtualObject
+		{
+		public:
+			enum class BroadPhaseType : System::Int32
+			{
+				BROAD_PHASE_INVALID = 0,
+				BROAD_PHASE_ENTITY = 1,
+				BROAD_PHASE_PHANTOM = 2,
+				BROAD_PHASE_BORDER = 3,
+				BROAD_PHASE_MAX_ID = 4,
+			};
+
+			interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
+
+			enum class MtChecks : System::Int32
+			{
+				MULTI_THREADING_CHECKS_ENABLE = 0,
+				MULTI_THREADING_CHECKS_IGNORE = 1,
+			};
+
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+
+			property hkpWorld^ m_world
+			{
+				hkpWorld^ __clrcall get();
+
+				void __clrcall set(hkpWorld^ value);
+			}
+
+			property System::UInt64 m_userData
+			{
+				System::UInt64 __clrcall get();
+
+				void __clrcall set(System::UInt64 value);
+			}
+
+			property hkpLinkedCollidable^ m_collidable
+			{
+				hkpLinkedCollidable^ __clrcall get();
+			}
+
+			property hkStringPtr^ m_name
+			{
+				hkStringPtr^ __clrcall get();
+			}
+
+			/// <summary>
+			/// Gets the collidable wrapper.
+			/// </summary>
+			property NiCollisionObject^ Collidable
+			{
+				NiCollisionObject^ __clrcall get();
+			}
+
+			/// <summary>
+			/// Gets the node this object is attached to.
+			/// </summary>
+			property NiAVObject^ Node
+			{
+				NiAVObject^ __clrcall get();
+			}
+		};
+
+		public interface class bhkNiCollisionObject : public NiCollisionObject, public NetScriptFramework::IVirtualObject
+		{
+		public:
+			/// <summary>
+			/// Gets the havok world object wrapper.
+			/// </summary>
+			property bhkWorldObject^ WorldObject
+			{
+				bhkWorldObject^ __clrcall get();
+			}
+		};
+
+		public interface class ImageSpaceModifierInstanceTemp : public ImageSpaceModifierInstance, public NetScriptFramework::IVirtualObject
+		{
+		public:
+			property System::Single Duration
+			{
+				System::Single __clrcall get();
+			}
+		};
+
+		public interface class ImageSpaceModifierInstanceForm : public ImageSpaceModifierInstance, public NetScriptFramework::IVirtualObject { };
+
+		public interface class NiCollisionData : public NiCollisionObject, public NetScriptFramework::IVirtualObject { };
+
+		public interface class hkpPhantom : public hkpWorldObject, public NetScriptFramework::IVirtualObject
+		{
+		public:
+			interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
+
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		public interface class bhkCollisionObject : public bhkNiCollisionObject, public NetScriptFramework::IVirtualObject { };
+
+		public interface class bhkPCollisionObject : public bhkNiCollisionObject, public NetScriptFramework::IVirtualObject { };
+
+		public interface class ImageSpaceModifierInstanceDOF : public ImageSpaceModifierInstanceTemp, public NetScriptFramework::IVirtualObject
+		{
+		public:
+			interface class Data : public NetScriptFramework::IMemoryObject
+			{
+			public:
+				property NetScriptFramework::FixedMemoryArray<System::Single>^ Values
+				{
+					NetScriptFramework::FixedMemoryArray<System::Single>^ __clrcall get();
+				}
+			};
+
+			enum class DOFMode : System::SByte
+			{
+				FrontBack = 0,
+				Front = 1,
+				Back = 2,
+				None = 3,
+			};
+
+			enum class DOFDataIndices : System::Int32
+			{
+				FadeAmount = 0,
+				FadeR = 1,
+				FadeG = 2,
+				FadeB = 3,
+				BlurRadius = 4,
+				DoubleVisionStrength = 5,
+				RadialBlurStrength = 6,
+				RadialBlurRampup = 7,
+				RadialBlurStart = 8,
+				RadialBlurRampdown = 9,
+				RadialBlurDownStart = 0xA,
+				RadialBlurCenterX = 0xB,
+				RadialBlurCenterY = 0xC,
+				DOFStrength = 0xD,
+				DOFDistance = 0xE,
+				DOFRange = 0xF,
+				DOFMode = 0x10,
+				MotionBlurStrength = 0x11,
+			};
+
+			property ImageSpaceModifierInstanceDOF::Data^ DOFData
+			{
+				ImageSpaceModifierInstanceDOF::Data^ __clrcall get();
+			}
+		};
+
+		public interface class ImageSpaceModifierInstanceRB : public ImageSpaceModifierInstanceTemp, public NetScriptFramework::IVirtualObject { };
+
+		interface class hkWorldOperation::AddReference : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		interface class hkWorldOperation::RemoveReference : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		interface class hkWorldOperation::SetWorldObjectShape : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		interface class hkWorldOperation::UpdateWorldObjectShape : public hkWorldOperation::BaseOperation, public NetScriptFramework::IMemoryObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		public interface class hkpShapePhantom : public hkpPhantom, public NetScriptFramework::IVirtualObject
+		{
+		public:
+			interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
+
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		public interface class hkpAabbPhantom : public hkpPhantom, public NetScriptFramework::IVirtualObject
+		{
+		public:
+			interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
+
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+
+			interface class OrderByUid : public NetScriptFramework::IMemoryObject { };
+		};
+
+		public interface class bhkBlendCollisionObject : public bhkCollisionObject, public NetScriptFramework::IVirtualObject { };
+
+		public interface class bhkCartTether : public bhkCollisionObject, public NetScriptFramework::IVirtualObject { };
+
+		public interface class bhkSPCollisionObject : public bhkPCollisionObject, public NetScriptFramework::IVirtualObject { };
+
+		public interface class hkpCharacterProxy : public hkReferencedObject, public hkpEntityListener, public hkpPhantomListener, public NetScriptFramework::IVirtualObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		interface class BGSWaterCollisionManager::bshkAutoWater : public hkpAabbPhantom, public BGSWaterCollisionManager::BGSWaterUpdateI, public NetScriptFramework::IVirtualObject { };
+
+		public interface class bhkAttachmentCollisionObject : public bhkBlendCollisionObject, public NetScriptFramework::IVirtualObject { };
+
+		public interface class hkpCharacterProxyCinfo : public hkpCharacterControllerCinfo, public NetScriptFramework::IVirtualObject
+		{
+		public:
+			interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
+
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		interface class hkaDetectRagdollPenetration::Setup : public NetScriptFramework::IMemoryObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		public interface class hkAvoidBox : public hkpAabbPhantom, public NetScriptFramework::IVirtualObject { };
+
+		public interface class hkpCachingShapePhantom : public hkpShapePhantom, public NetScriptFramework::IVirtualObject
+		{
+		public:
+			interface class CollisionDetail : public NetScriptFramework::IMemoryObject
+			{
+			public:
+				interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+			};
+
+			interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
+
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+
+			interface class OrderByUid : public NetScriptFramework::IMemoryObject { };
+		};
+
+		public interface class hkpSimpleShapePhantom : public hkpShapePhantom, public NetScriptFramework::IVirtualObject
+		{
+		public:
+			interface class CollisionDetail : public NetScriptFramework::IMemoryObject
+			{
+			public:
+				interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
+
+				interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+			};
+
+			interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
+
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+
+			interface class OrderByUid : public NetScriptFramework::IMemoryObject { };
+		};
+
+		public interface class WeaponObject : public bhkBlendCollisionObject, public NetScriptFramework::IVirtualObject { };
+
+		interface class hkpVehicleLinearCastWheelCollide::WheelState : public NetScriptFramework::IMemoryObject
+		{
+		public:
+			interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
+
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		public interface class hkpVehicleRayCastWheelCollide : public hkpVehicleWheelCollide, public NetScriptFramework::IVirtualObject
+		{
+		public:
+			interface class DefaultStruct : public NetScriptFramework::IMemoryObject { };
+
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		public interface class hkpWindRegion : public hkReferencedObject, public hkpWorldPostSimulationListener, public NetScriptFramework::IVirtualObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		public interface class ahkpCharacterProxy : public hkpCharacterProxy, public NetScriptFramework::IVirtualObject { };
+
+		public interface class bhkCharacterProxyCinfo : public hkpCharacterProxyCinfo, public hkSerializableCinfo, public NetScriptFramework::IVirtualObject { };
+
+		public interface class hkpCharacterProxyIntegrateCommand : public NetScriptFramework::IMemoryObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		public interface class hkpCharacterProxyIntegrateJob : public hkpCharacterProxyJob, public NetScriptFramework::IMemoryObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		interface class hkpCharacterProxyJobUtil::CharacterJobBatch : public NetScriptFramework::IMemoryObject
+		{
+		public:
+			interface class MustEndWithSemiColon : public NetScriptFramework::IMemoryObject { };
+		};
+
+		interface class NiNode;
+
+		public interface class ExtraCell3D : public BSExtraData, public NetScriptFramework::IVirtualObject
+		{
+		public:
+			property NiPointer<NiNode^>^ CellNode
+			{
+				NiPointer<NiNode^>^ __clrcall get();
+			}
+		};
+
+		public interface class Stars : public SkyObject, public NetScriptFramework::IVirtualObject
+		{
+		public:
+			property NiPointer<NiNode^>^ StarsRoot
+			{
+				NiPointer<NiNode^>^ __clrcall get();
+			}
+
+			property System::Single Alpha
+			{
+				System::Single __clrcall get();
+			}
+		};
+
+		public interface class DeferredHideLimb : public NetScriptFramework::IMemoryObject
+		{
+		public:
+			property System::Single DismemberTimer
+			{
+				System::Single __clrcall get();
+			}
+
+			property System::Int32 LimbIndex
+			{
+				System::Int32 __clrcall get();
+			}
+
+			property NiPointer<NiNode^>^ DismemberedLimbRoot
+			{
+				NiPointer<NiNode^>^ __clrcall get();
+			}
+
+			property NiPointer<NiNode^>^ ReplacementLimb
+			{
+				NiPointer<NiNode^>^ __clrcall get();
+			}
+
+			property DeferredHideLimb^ Next
+			{
+				DeferredHideLimb^ __clrcall get();
+			}
+
+			property System::Boolean Explosion
+			{
+				System::Boolean __clrcall get();
+			}
 		};
 
 		interface class BGSSoundDescriptorForm;
@@ -39201,201 +39396,6 @@ namespace NetScriptFramework
 				TESObjectREFR^ __clrcall get();
 
 				void __clrcall set(TESObjectREFR^ value);
-			}
-		};
-
-		interface class NiAVObject;
-
-		public interface class SkyObject : public NetScriptFramework::IVirtualObject
-		{
-		public:
-			property NiPointer<NiAVObject^>^ RootNode
-			{
-				NiPointer<NiAVObject^>^ __clrcall get();
-			}
-		};
-
-		public interface class NiCollisionObject : public NiObject, public NetScriptFramework::IVirtualObject
-		{
-		public:
-			/// <summary>
-			/// Gets the owner object or node.
-			/// </summary>
-			property NiAVObject^ OwnerObject
-			{
-				NiAVObject^ __clrcall get();
-			}
-		};
-
-		public interface class ImageSpaceModifierInstance : public NiObject, public NetScriptFramework::IVirtualObject
-		{
-		public:
-			property System::Single Strength
-			{
-				System::Single __clrcall get();
-			}
-
-			property NiPointer<NiAVObject^>^ Target
-			{
-				NiPointer<NiAVObject^>^ __clrcall get();
-			}
-
-			property System::Single Age
-			{
-				System::Single __clrcall get();
-			}
-
-			property System::UInt32 ModifierInstanceFlags
-			{
-				System::UInt32 __clrcall get();
-			}
-		};
-
-		public interface class bhkNiCollisionObject : public NiCollisionObject, public NetScriptFramework::IVirtualObject
-		{
-		public:
-			/// <summary>
-			/// Gets the havok world object wrapper.
-			/// </summary>
-			property bhkWorldObject^ WorldObject
-			{
-				bhkWorldObject^ __clrcall get();
-			}
-		};
-
-		public interface class ImageSpaceModifierInstanceTemp : public ImageSpaceModifierInstance, public NetScriptFramework::IVirtualObject
-		{
-		public:
-			property System::Single Duration
-			{
-				System::Single __clrcall get();
-			}
-		};
-
-		public interface class ImageSpaceModifierInstanceForm : public ImageSpaceModifierInstance, public NetScriptFramework::IVirtualObject { };
-
-		public interface class NiCollisionData : public NiCollisionObject, public NetScriptFramework::IVirtualObject { };
-
-		public interface class bhkCollisionObject : public bhkNiCollisionObject, public NetScriptFramework::IVirtualObject { };
-
-		public interface class bhkPCollisionObject : public bhkNiCollisionObject, public NetScriptFramework::IVirtualObject { };
-
-		public interface class ImageSpaceModifierInstanceDOF : public ImageSpaceModifierInstanceTemp, public NetScriptFramework::IVirtualObject
-		{
-		public:
-			interface class Data : public NetScriptFramework::IMemoryObject
-			{
-			public:
-				property NetScriptFramework::FixedMemoryArray<System::Single>^ Values
-				{
-					NetScriptFramework::FixedMemoryArray<System::Single>^ __clrcall get();
-				}
-			};
-
-			enum class DOFMode : System::SByte
-			{
-				FrontBack = 0,
-				Front = 1,
-				Back = 2,
-				None = 3,
-			};
-
-			enum class DOFDataIndices : System::Int32
-			{
-				FadeAmount = 0,
-				FadeR = 1,
-				FadeG = 2,
-				FadeB = 3,
-				BlurRadius = 4,
-				DoubleVisionStrength = 5,
-				RadialBlurStrength = 6,
-				RadialBlurRampup = 7,
-				RadialBlurStart = 8,
-				RadialBlurRampdown = 9,
-				RadialBlurDownStart = 0xA,
-				RadialBlurCenterX = 0xB,
-				RadialBlurCenterY = 0xC,
-				DOFStrength = 0xD,
-				DOFDistance = 0xE,
-				DOFRange = 0xF,
-				DOFMode = 0x10,
-				MotionBlurStrength = 0x11,
-			};
-
-			property ImageSpaceModifierInstanceDOF::Data^ DOFData
-			{
-				ImageSpaceModifierInstanceDOF::Data^ __clrcall get();
-			}
-		};
-
-		public interface class ImageSpaceModifierInstanceRB : public ImageSpaceModifierInstanceTemp, public NetScriptFramework::IVirtualObject { };
-
-		public interface class bhkBlendCollisionObject : public bhkCollisionObject, public NetScriptFramework::IVirtualObject { };
-
-		public interface class bhkCartTether : public bhkCollisionObject, public NetScriptFramework::IVirtualObject { };
-
-		public interface class bhkSPCollisionObject : public bhkPCollisionObject, public NetScriptFramework::IVirtualObject { };
-
-		public interface class bhkAttachmentCollisionObject : public bhkBlendCollisionObject, public NetScriptFramework::IVirtualObject { };
-
-		public interface class WeaponObject : public bhkBlendCollisionObject, public NetScriptFramework::IVirtualObject { };
-
-		interface class NiNode;
-
-		public interface class ExtraCell3D : public BSExtraData, public NetScriptFramework::IVirtualObject
-		{
-		public:
-			property NiPointer<NiNode^>^ CellNode
-			{
-				NiPointer<NiNode^>^ __clrcall get();
-			}
-		};
-
-		public interface class Stars : public SkyObject, public NetScriptFramework::IVirtualObject
-		{
-		public:
-			property NiPointer<NiNode^>^ StarsRoot
-			{
-				NiPointer<NiNode^>^ __clrcall get();
-			}
-
-			property System::Single Alpha
-			{
-				System::Single __clrcall get();
-			}
-		};
-
-		public interface class DeferredHideLimb : public NetScriptFramework::IMemoryObject
-		{
-		public:
-			property System::Single DismemberTimer
-			{
-				System::Single __clrcall get();
-			}
-
-			property System::Int32 LimbIndex
-			{
-				System::Int32 __clrcall get();
-			}
-
-			property NiPointer<NiNode^>^ DismemberedLimbRoot
-			{
-				NiPointer<NiNode^>^ __clrcall get();
-			}
-
-			property NiPointer<NiNode^>^ ReplacementLimb
-			{
-				NiPointer<NiNode^>^ __clrcall get();
-			}
-
-			property DeferredHideLimb^ Next
-			{
-				DeferredHideLimb^ __clrcall get();
-			}
-
-			property System::Boolean Explosion
-			{
-				System::Boolean __clrcall get();
 			}
 		};
 
@@ -56430,6 +56430,80 @@ namespace NetScriptFramework
 			}
 		};
 
+		interface class BSMultiStreamInstanceTriShape;
+
+		interface class BGSDistantTreeBlock::TreeGroup : public NetScriptFramework::IMemoryObject
+		{
+		public:
+			property NiPointer<BSMultiStreamInstanceTriShape^>^ Geometry
+			{
+				NiPointer<BSMultiStreamInstanceTriShape^>^ __clrcall get();
+			}
+
+			property BSTArray<BGSDistantTreeBlock::InstanceData^, BSTArrayHeapAllocator^>^ Instances
+			{
+				BSTArray<BGSDistantTreeBlock::InstanceData^, BSTArrayHeapAllocator^>^ __clrcall get();
+			}
+
+			property System::Int32 Num
+			{
+				System::Int32 __clrcall get();
+			}
+
+			property System::Boolean ShaderPropertyUpToDate
+			{
+				System::Boolean __clrcall get();
+			}
+
+			property System::SByte TreeType
+			{
+				System::SByte __clrcall get();
+			}
+		};
+
+		public interface class GrassManager : public NetScriptFramework::IMemoryObject
+		{
+		public:
+			property System::Byte GenerateGrassDataFiles
+			{
+				System::Byte __clrcall get();
+
+				void __clrcall set(System::Byte value);
+			}
+
+			property Mutex^ GrassLock
+			{
+				Mutex^ __clrcall get();
+			}
+
+			property System::Int32 ShapeArrayLocked
+			{
+				System::Int32 __clrcall get();
+			}
+
+			property BSTArray<NiPointer<BSMultiStreamInstanceTriShape^>^, BSTArrayHeapAllocator^>^ ShapeArray
+			{
+				BSTArray<NiPointer<BSMultiStreamInstanceTriShape^>^, BSTArrayHeapAllocator^>^ __clrcall get();
+			}
+
+			property System::Single GrassTotalDistance
+			{
+				System::Single __clrcall get();
+			}
+
+			property System::IntPtr TemporaryShapeBuffer
+			{
+				System::IntPtr __clrcall get();
+			}
+
+			property System::Byte EnableGrass
+			{
+				System::Byte __clrcall get();
+
+				void __clrcall set(System::Byte value);
+			}
+		};
+
 		interface class BGSStoryManagerQuestNode;
 
 		public interface class BGSScenePhase : public NetScriptFramework::IMemoryObject
@@ -59970,35 +60044,6 @@ namespace NetScriptFramework
 		public interface class NiPSysInitialRotSpeedVarCtlr : public NiPSysModifierFloatCtlr, public NetScriptFramework::IVirtualObject { };
 
 		public interface class NiPSysModifierActiveCtlr : public NiPSysModifierBoolCtlr, public NetScriptFramework::IVirtualObject { };
-
-		interface class BGSDistantTreeBlock::TreeGroup : public NetScriptFramework::IMemoryObject
-		{
-		public:
-			property NiPointer<BSMultiStreamInstanceTriShape^>^ Geometry
-			{
-				NiPointer<BSMultiStreamInstanceTriShape^>^ __clrcall get();
-			}
-
-			property BSTArray<BGSDistantTreeBlock::InstanceData^, BSTArrayHeapAllocator^>^ Instances
-			{
-				BSTArray<BGSDistantTreeBlock::InstanceData^, BSTArrayHeapAllocator^>^ __clrcall get();
-			}
-
-			property System::Int32 Num
-			{
-				System::Int32 __clrcall get();
-			}
-
-			property System::Boolean ShaderPropertyUpToDate
-			{
-				System::Boolean __clrcall get();
-			}
-
-			property System::SByte TreeType
-			{
-				System::SByte __clrcall get();
-			}
-		};
 
 		/// <summary>
 		/// Simple one-way linked list node implementation.

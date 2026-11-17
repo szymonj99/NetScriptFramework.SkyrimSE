@@ -496,11 +496,14 @@ namespace NetScriptFramework
 			RegisterTypes();
 
 			// Register events.
-			Events::InitializeEvents();
+			if(!NetScriptFramework::PluginManager::IsDisabled)
+				Events::InitializeEvents();
 
-			Events::OnFrame->Register(gcnew NetScriptFramework::Event<FrameEventArgs^>::EventHandler(NiObjectLoadParameters__OnFrame), 0, 0, NetScriptFramework::EventRegistrationFlags::None);
+			if(!NetScriptFramework::PluginManager::IsDisabled)
+				Events::OnFrame->Register(gcnew NetScriptFramework::Event<FrameEventArgs^>::EventHandler(NiObjectLoadParameters__OnFrame), 0, 0, NetScriptFramework::EventRegistrationFlags::None);
 
-			Events::OnMainMenu->Register(gcnew NetScriptFramework::Event<MainMenuEventArgs^>::EventHandler(KeywordCache__Initialize), 0, 1, NetScriptFramework::EventRegistrationFlags::None);
+			if(!NetScriptFramework::PluginManager::IsDisabled)
+				Events::OnMainMenu->Register(gcnew NetScriptFramework::Event<MainMenuEventArgs^>::EventHandler(KeywordCache__Initialize), 0, 1, NetScriptFramework::EventRegistrationFlags::None);
 
 			NetScriptFramework::CrashLog::OnAfterWrite->Register(gcnew NetScriptFramework::Event<CrashLogEventArgs^>::EventHandler(CrashLogModListWriter__Write), 0, 0, NetScriptFramework::EventRegistrationFlags::None);
 

@@ -107,7 +107,7 @@ namespace NetScriptFramework
 			{
 				System::Int32 __clrcall get() override
 				{
-					return 14;
+					return 18;
 				}
 			}
 
@@ -121,7 +121,7 @@ namespace NetScriptFramework
 			{
 				System::UInt64 __clrcall get() override
 				{
-					return 0x14AEB93E09DDA87F;
+					return 0x15940A35F6AC1D1B;
 				}
 			}
 

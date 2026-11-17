@@ -115,6 +115,62 @@ namespace NetScriptFramework
 		};
 
 		/// <summary>
+		/// Arguments for OnCalculateMagicCost event.
+		/// </summary>
+		public ref class CalculateMagicCostEventArgs sealed : public HookedEventArgs
+		{
+			private: Actor^ __v_Caster;
+			/// <summary>
+			/// The actor who is casting. This may be null if not available.
+			/// </summary>
+			public: property Actor^ Caster
+			{
+				public: Actor^ __clrcall get() { return __v_Caster; }
+				internal: void __clrcall set(Actor^ value) { __v_Caster = value; }
+			}
+
+			private: MagicItem^ __v_Item;
+			/// <summary>
+			/// The item or spell or effect to calculate for.
+			/// </summary>
+			public: property MagicItem^ Item
+			{
+				public: MagicItem^ __clrcall get() { return __v_Item; }
+				internal: void __clrcall set(MagicItem^ value) { __v_Item = value; }
+			}
+
+			private: System::Single __v_ResultValue;
+			/// <summary>
+			/// The resulting cost value.
+			/// </summary>
+			public: property System::Single ResultValue
+			{
+				public: System::Single __clrcall get() { return __v_ResultValue; }
+				public: void __clrcall set(System::Single value) { __v_ResultValue = value; }
+			}
+
+			private: System::Single __v_OriginalValue;
+			/// <summary>
+			/// The original cost value before any events modified it.
+			/// </summary>
+			public: property System::Single OriginalValue
+			{
+				public: System::Single __clrcall get() { return __v_OriginalValue; }
+				internal: void __clrcall set(System::Single value) { __v_OriginalValue = value; }
+			}
+
+			private: System::Single __v_BaseValue;
+			/// <summary>
+			/// The base cost value before perks modified it.
+			/// </summary>
+			public: property System::Single BaseValue
+			{
+				public: System::Single __clrcall get() { return __v_BaseValue; }
+				internal: void __clrcall set(System::Single value) { __v_BaseValue = value; }
+			}
+		};
+
+		/// <summary>
 		/// Arguments for OnCameraStateChanging event.
 		/// </summary>
 		public ref class CameraStateChangingEventArgs sealed : public HookedEventArgs
@@ -338,6 +394,72 @@ namespace NetScriptFramework
 			{
 				public: System::Boolean __clrcall get() { return __v_Entering; }
 				internal: void __clrcall set(System::Boolean value) { __v_Entering = value; }
+			}
+		};
+
+		/// <summary>
+		/// Arguments for OnPreEquipItem event.
+		/// </summary>
+		public ref class PreEquipItemEventArgs sealed : public HookedEventArgs
+		{
+			private: Actor^ __v_Who;
+			/// <summary>
+			/// The actor who is equipping.
+			/// </summary>
+			public: property Actor^ Who
+			{
+				public: Actor^ __clrcall get() { return __v_Who; }
+				internal: void __clrcall set(Actor^ value) { __v_Who = value; }
+			}
+
+			private: TESForm^ __v_Item;
+			/// <summary>
+			/// The item thing being equipped.
+			/// </summary>
+			public: property TESForm^ Item
+			{
+				public: TESForm^ __clrcall get() { return __v_Item; }
+				internal: void __clrcall set(TESForm^ value) { __v_Item = value; }
+			}
+
+			private: System::IntPtr __v_DataPtr;
+			/// <summary>
+			/// Additional data.
+			/// </summary>
+			public: property System::IntPtr DataPtr
+			{
+				public: System::IntPtr __clrcall get() { return __v_DataPtr; }
+				internal: void __clrcall set(System::IntPtr value) { __v_DataPtr = value; }
+			}
+
+			private: BSExtraDataList^ __v_ExtraData;
+			/// <summary>
+			/// Extra data list.
+			/// </summary>
+			public: property BSExtraDataList^ ExtraData
+			{
+				public: BSExtraDataList^ __clrcall get() { return __v_ExtraData; }
+				internal: void __clrcall set(BSExtraDataList^ value) { __v_ExtraData = value; }
+			}
+
+			private: System::Boolean __v_Skip;
+			/// <summary>
+			/// Skip equipping?
+			/// </summary>
+			public: property System::Boolean Skip
+			{
+				public: System::Boolean __clrcall get() { return __v_Skip; }
+				public: void __clrcall set(System::Boolean value) { __v_Skip = value; }
+			}
+
+			private: System::String^ __v_Message;
+			/// <summary>
+			/// Show this message in top left of HUD.
+			/// </summary>
+			public: property System::String^ Message
+			{
+				public: System::String^ __clrcall get() { return __v_Message; }
+				public: void __clrcall set(System::String^ value) { __v_Message = value; }
 			}
 		};
 
@@ -853,6 +975,37 @@ namespace NetScriptFramework
 					ctx->AX = System::IntPtr(args->Value);
 			}
 
+		private: static NetScriptFramework::Event<CalculateMagicCostEventArgs^>^ __handler_CalculateMagicCost;
+		public:
+			/// <summary>
+			/// Event is raised when calculating magic cost for a spell.
+			/// </summary>
+			/// <value>
+			/// OnCalculateMagicCost event handler.
+			/// </value>
+			static property NetScriptFramework::Event<CalculateMagicCostEventArgs^>^ OnCalculateMagicCost
+			{
+				NetScriptFramework::Event<CalculateMagicCostEventArgs^>^ get() { return __handler_CalculateMagicCost; }
+			}
+		private: static CalculateMagicCostEventArgs^ __before_CalculateMagicCost(NetScriptFramework::CPURegisters^ ctx)
+			{
+				CalculateMagicCostEventArgs^ args = gcnew CalculateMagicCostEventArgs();
+				args->Caster = safe_cast<Actor^>(NetScriptFramework::MemoryObject::FromAddress<TESObjectREFR^>(ctx->BP));
+				args->Item = NetScriptFramework::MemoryObject::FromAddress<MagicItem^>(ctx->DI);
+				System::IntPtr addrOfValue = ctx->SP + 0x40;
+				args->BaseValue = NetScriptFramework::Memory::ReadFloat(addrOfValue, false);
+				if(ctx->BP != System::IntPtr::Zero)
+					NetScriptFramework::Memory::InvokeCdecl(__VIDS::VID23073.Value, 0x26, ctx->BP, ctx->DI, addrOfValue);
+				args->OriginalValue = NetScriptFramework::Memory::ReadFloat(addrOfValue, false);
+				args->ResultValue = args->OriginalValue;
+				return args;
+			}
+		private: static void __after_CalculateMagicCost(NetScriptFramework::CPURegisters^ ctx, CalculateMagicCostEventArgs^ args)
+			{
+				if(args->ResultValue != args->OriginalValue)
+					NetScriptFramework::Memory::WriteFloat(ctx->SP + 0x40, args->ResultValue, false);
+			}
+
 		private: static NetScriptFramework::Event<CameraStateChangingEventArgs^>^ __handler_CameraStateChanging;
 		public:
 			/// <summary>
@@ -1040,6 +1193,47 @@ namespace NetScriptFramework
 				MainMenuEventArgs^ args = gcnew MainMenuEventArgs();
 				args->Entering = true;
 				return args;
+			}
+
+		private: static NetScriptFramework::Event<PreEquipItemEventArgs^>^ __handler_PreEquipItem;
+		public:
+			/// <summary>
+			/// Event is raised just before trying to equip item. We can add custom fail message here and prevent item being equipped.
+			/// </summary>
+			/// <value>
+			/// OnPreEquipItem event handler.
+			/// </value>
+			static property NetScriptFramework::Event<PreEquipItemEventArgs^>^ OnPreEquipItem
+			{
+				NetScriptFramework::Event<PreEquipItemEventArgs^>^ get() { return __handler_PreEquipItem; }
+			}
+		private: static PreEquipItemEventArgs^ __before_PreEquipItem(NetScriptFramework::CPURegisters^ ctx)
+			{
+				PreEquipItemEventArgs^ args = gcnew PreEquipItemEventArgs();
+				args->Who = NetScriptFramework::MemoryObject::FromAddress<Actor^>(ctx->CX);
+				args->Item = NetScriptFramework::MemoryObject::FromAddress<TESForm^>(ctx->DX);
+				args->DataPtr = ctx->R8;
+				if(args->DataPtr != System::IntPtr::Zero)
+					args->ExtraData = NetScriptFramework::MemoryObject::FromAddress<BSExtraDataList^>(NetScriptFramework::Memory::ReadPointer(args->DataPtr, false));
+				return args;
+			}
+		private: static void __after_PreEquipItem(NetScriptFramework::CPURegisters^ ctx, PreEquipItemEventArgs^ args)
+			{
+				if(args->Message != nullptr && args->Message->Length != 0)
+				{
+					auto alloc = NetScriptFramework::Memory::AllocateUTF8String(args->Message);
+					try
+					{
+						auto strPtr = alloc->Address;
+						NetScriptFramework::Memory::InvokeCdecl(__VIDS::VID52050.Value, strPtr, 0, 1);
+					}
+					finally
+					{
+						delete alloc;
+					}
+				}
+				if(args->Skip)
+					ctx->IP = ctx->IP + 0x8ED;
 			}
 
 		private: static NetScriptFramework::Event<ReduceHUDAmmoCounterEventArgs^>^ __handler_ReduceHUDAmmoCounter;
@@ -1445,6 +1639,7 @@ namespace NetScriptFramework
 				__handler_BarterMenu = gcnew NetScriptFramework::EventHook<BarterMenuEventArgs^>(NetScriptFramework::EventHookFlags::None, "BarterMenu", gcnew NetScriptFramework::EventHookParameters<BarterMenuEventArgs^>(__VIDS::VID49999.Value, 5, 5, "48 89 4C 24 08", gcnew System::Func<NetScriptFramework::CPURegisters^, BarterMenuEventArgs^>(__before_BarterMenu_1), nullptr), gcnew NetScriptFramework::EventHookParameters<BarterMenuEventArgs^>(__VIDS::VID50066.Value+0x19, 5, 5, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, BarterMenuEventArgs^>(__before_BarterMenu_2), nullptr));
 				__handler_CalculateDetection = gcnew NetScriptFramework::EventHook<CalculateDetectionEventArgs^>(NetScriptFramework::EventHookFlags::None, "CalculateDetection", gcnew NetScriptFramework::EventHookParameters<CalculateDetectionEventArgs^>(__VIDS::VID41659.Value+0x52B, 6, 6, "8B 95 D0 00 00 00", gcnew System::Func<NetScriptFramework::CPURegisters^, CalculateDetectionEventArgs^>(__before_CalculateDetection), gcnew System::Action<NetScriptFramework::CPURegisters^, CalculateDetectionEventArgs^>(__after_CalculateDetection)));
 				__handler_CalculateFormGoldValue = gcnew NetScriptFramework::EventHook<CalculateFormGoldValueEventArgs^>(NetScriptFramework::EventHookFlags::None, "CalculateFormGoldValue", gcnew NetScriptFramework::EventHookParameters<CalculateFormGoldValueEventArgs^>(__VIDS::VID14799.Value+0x2E, 5, 5, "48 83 C4 30 5B", gcnew System::Func<NetScriptFramework::CPURegisters^, CalculateFormGoldValueEventArgs^>(__before_CalculateFormGoldValue_1), gcnew System::Action<NetScriptFramework::CPURegisters^, CalculateFormGoldValueEventArgs^>(__after_CalculateFormGoldValue_1)), gcnew NetScriptFramework::EventHookParameters<CalculateFormGoldValueEventArgs^>(__VIDS::VID14799.Value+0x67, 5, 5, "48 83 C4 30 5B", gcnew System::Func<NetScriptFramework::CPURegisters^, CalculateFormGoldValueEventArgs^>(__before_CalculateFormGoldValue_2), gcnew System::Action<NetScriptFramework::CPURegisters^, CalculateFormGoldValueEventArgs^>(__after_CalculateFormGoldValue_2)), gcnew NetScriptFramework::EventHookParameters<CalculateFormGoldValueEventArgs^>(__VIDS::VID14799.Value+0x95, 5, 5, "48 83 C4 30 5B", gcnew System::Func<NetScriptFramework::CPURegisters^, CalculateFormGoldValueEventArgs^>(__before_CalculateFormGoldValue_3), gcnew System::Action<NetScriptFramework::CPURegisters^, CalculateFormGoldValueEventArgs^>(__after_CalculateFormGoldValue_3)));
+				__handler_CalculateMagicCost = gcnew NetScriptFramework::EventHook<CalculateMagicCostEventArgs^>(NetScriptFramework::EventHookFlags::AlwaysRun, "CalculateMagicCost", gcnew NetScriptFramework::EventHookParameters<CalculateMagicCostEventArgs^>(__VIDS::VID11213.Value+0xC6, 0x1A, 0, "48 85 ED", gcnew System::Func<NetScriptFramework::CPURegisters^, CalculateMagicCostEventArgs^>(__before_CalculateMagicCost), gcnew System::Action<NetScriptFramework::CPURegisters^, CalculateMagicCostEventArgs^>(__after_CalculateMagicCost)));
 				__handler_CameraStateChanging = gcnew NetScriptFramework::EventHook<CameraStateChangingEventArgs^>(NetScriptFramework::EventHookFlags::None, "CameraStateChanging", gcnew NetScriptFramework::EventHookParameters<CameraStateChangingEventArgs^>(__VIDS::VID32290.Value, 5, 5, "48 89 5C 24 08", gcnew System::Func<NetScriptFramework::CPURegisters^, CameraStateChangingEventArgs^>(__before_CameraStateChanging), gcnew System::Action<NetScriptFramework::CPURegisters^, CameraStateChangingEventArgs^>(__after_CameraStateChanging)));
 				__handler_Frame = gcnew NetScriptFramework::EventHook<FrameEventArgs^>(NetScriptFramework::EventHookFlags::None, "Frame", gcnew NetScriptFramework::EventHookParameters<FrameEventArgs^>(__VIDS::VID35565.Value+0x1E, 5, 5, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, FrameEventArgs^>(__before_Frame), nullptr));
 				__handler_GainLevelXP = gcnew NetScriptFramework::EventHook<GainLevelXPEventArgs^>(NetScriptFramework::EventHookFlags::None, "GainLevelXP", gcnew NetScriptFramework::EventHookParameters<GainLevelXPEventArgs^>(__VIDS::VID40554.Value+0x230, 6, 6, "F3 0F 58 01 8B D6", gcnew System::Func<NetScriptFramework::CPURegisters^, GainLevelXPEventArgs^>(__before_GainLevelXP), gcnew System::Action<NetScriptFramework::CPURegisters^, GainLevelXPEventArgs^>(__after_GainLevelXP)));
@@ -1452,6 +1647,7 @@ namespace NetScriptFramework
 				__handler_InterruptCast = gcnew NetScriptFramework::EventHook<InterruptCastEventArgs^>(NetScriptFramework::EventHookFlags::None, "InterruptCast", gcnew NetScriptFramework::EventHookParameters<InterruptCastEventArgs^>(__VIDS::VID33630.Value+0x10, 6, 6, "48 8B 01 FF 50 40", gcnew System::Func<NetScriptFramework::CPURegisters^, InterruptCastEventArgs^>(__before_InterruptCast), nullptr));
 				__handler_MagicCasterFire = gcnew NetScriptFramework::EventHook<MagicCasterFireEventArgs^>(NetScriptFramework::EventHookFlags::None, "MagicCasterFire", gcnew NetScriptFramework::EventHookParameters<MagicCasterFireEventArgs^>(__VIDS::VID33629.Value+0xF7, 6, 6, "4C 8B 17 4C 8B CE", gcnew System::Func<NetScriptFramework::CPURegisters^, MagicCasterFireEventArgs^>(__before_MagicCasterFire), nullptr));
 				__handler_MainMenu = gcnew NetScriptFramework::EventHook<MainMenuEventArgs^>(NetScriptFramework::EventHookFlags::None, "MainMenu", gcnew NetScriptFramework::EventHookParameters<MainMenuEventArgs^>(__VIDS::VID51324.Value+0x19, 5, 5, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, MainMenuEventArgs^>(__before_MainMenu_1), nullptr), gcnew NetScriptFramework::EventHookParameters<MainMenuEventArgs^>(__VIDS::VID51236.Value, 5, 5, "48 89 4C 24 08", gcnew System::Func<NetScriptFramework::CPURegisters^, MainMenuEventArgs^>(__before_MainMenu_2), nullptr));
+				__handler_PreEquipItem = gcnew NetScriptFramework::EventHook<PreEquipItemEventArgs^>(NetScriptFramework::EventHookFlags::None, "PreEquipItem", gcnew NetScriptFramework::EventHookParameters<PreEquipItemEventArgs^>(__VIDS::VID36976.Value+5, 8, 8, "41 54 41 55 41 56 41 57", gcnew System::Func<NetScriptFramework::CPURegisters^, PreEquipItemEventArgs^>(__before_PreEquipItem), gcnew System::Action<NetScriptFramework::CPURegisters^, PreEquipItemEventArgs^>(__after_PreEquipItem)));
 				__handler_ReduceHUDAmmoCounter = gcnew NetScriptFramework::EventHook<ReduceHUDAmmoCounterEventArgs^>(NetScriptFramework::EventHookFlags::AlwaysRun, "ReduceHUDAmmoCounter", gcnew NetScriptFramework::EventHookParameters<ReduceHUDAmmoCounterEventArgs^>(__VIDS::VID42928.Value+0x63A, 7, -5, "E8 ?? ?? ?? ?? FF C8", gcnew System::Func<NetScriptFramework::CPURegisters^, ReduceHUDAmmoCounterEventArgs^>(__before_ReduceHUDAmmoCounter), gcnew System::Action<NetScriptFramework::CPURegisters^, ReduceHUDAmmoCounterEventArgs^>(__after_ReduceHUDAmmoCounter)));
 				__handler_RemoveMagicEffectsWithArchetype = gcnew NetScriptFramework::EventHook<RemoveMagicEffectsWithArchetypeEventArgs^>(NetScriptFramework::EventHookFlags::None, "RemoveMagicEffectsWithArchetype", gcnew NetScriptFramework::EventHookParameters<RemoveMagicEffectsWithArchetypeEventArgs^>(__VIDS::VID37864.Value+0x2B, 5, 5, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, RemoveMagicEffectsWithArchetypeEventArgs^>(__before_RemoveMagicEffectsWithArchetype_1), gcnew System::Action<NetScriptFramework::CPURegisters^, RemoveMagicEffectsWithArchetypeEventArgs^>(__after_RemoveMagicEffectsWithArchetype_1)), gcnew NetScriptFramework::EventHookParameters<RemoveMagicEffectsWithArchetypeEventArgs^>(__VIDS::VID37864.Value+0x4F, 5, 5, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, RemoveMagicEffectsWithArchetypeEventArgs^>(__before_RemoveMagicEffectsWithArchetype_2), gcnew System::Action<NetScriptFramework::CPURegisters^, RemoveMagicEffectsWithArchetypeEventArgs^>(__after_RemoveMagicEffectsWithArchetype_2)), gcnew NetScriptFramework::EventHookParameters<RemoveMagicEffectsWithArchetypeEventArgs^>(__VIDS::VID37672.Value+0xB9, 5, 5, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, RemoveMagicEffectsWithArchetypeEventArgs^>(__before_RemoveMagicEffectsWithArchetype_3), gcnew System::Action<NetScriptFramework::CPURegisters^, RemoveMagicEffectsWithArchetypeEventArgs^>(__after_RemoveMagicEffectsWithArchetype_3)));
 				__handler_ShadowCullingBegin = gcnew NetScriptFramework::EventHook<ShadowCullingBeginEventArgs^>(NetScriptFramework::EventHookFlags::AlwaysRun, "ShadowCullingBegin", gcnew NetScriptFramework::EventHookParameters<ShadowCullingBeginEventArgs^>(__VIDS::VID100414.Value+0x2CC, 5, 0, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, ShadowCullingBeginEventArgs^>(__before_ShadowCullingBegin), gcnew System::Action<NetScriptFramework::CPURegisters^, ShadowCullingBeginEventArgs^>(__after_ShadowCullingBegin)));
