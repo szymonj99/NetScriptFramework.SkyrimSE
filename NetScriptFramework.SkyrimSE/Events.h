@@ -1087,6 +1087,21 @@ namespace NetScriptFramework
 					ctx->XMM0f = args->Amount;
 			}
 
+		private: static GainLevelXPEventArgs^ __before_GainLevelXP_Modern(NetScriptFramework::CPURegisters^ ctx)
+			{
+				GainLevelXPEventArgs^ args = gcnew GainLevelXPEventArgs();
+				args->Skill = (ActorValueIndices)((int)ctx->SI.ToInt64());
+				args->IsFromTrainingOrBook = NetScriptFramework::Memory::ReadUInt8(ctx->SP + 0x1D8, false) == 0;
+				args->OriginalAmount = ctx->XMM1f;
+				args->Amount = args->OriginalAmount;
+				return args;
+			}
+		private: static void __after_GainLevelXP_Modern(NetScriptFramework::CPURegisters^ ctx, GainLevelXPEventArgs^ args)
+			{
+				if(args->Amount != args->OriginalAmount)
+					ctx->XMM1f = args->Amount;
+			}
+
 		private: static NetScriptFramework::Event<GainSkillXPEventArgs^>^ __handler_GainSkillXP;
 		public:
 			/// <summary>
@@ -1135,6 +1150,25 @@ namespace NetScriptFramework
 			{
 				if(args->Amount != args->OriginalAmount)
 					NetScriptFramework::Memory::WriteFloat(ctx->SP + 0x188, args->Amount, false);
+			}
+
+		private: static GainSkillXPEventArgs^ __before_GainSkillXP_Modern(NetScriptFramework::CPURegisters^ ctx)
+			{
+				GainSkillXPEventArgs^ args = gcnew GainSkillXPEventArgs();
+				auto amount = ctx->SP + 0x1B8;
+				args->BaseAmount = NetScriptFramework::Memory::ReadFloat(amount, false);
+				args->Skill = (ActorValueIndices)((int)ctx->SI.ToInt64());
+				// The skill-use caller enables scaling. Training and book advances bypass it.
+				args->IsFromTrainingOrBook = NetScriptFramework::Memory::ReadUInt8(ctx->SP + 0x1D8, false) == 0;
+				NetScriptFramework::Memory::InvokeCdecl(__VIDS::VID23073.Value, ctx->CX, ctx->DX, ctx->R8);
+				args->OriginalAmount = NetScriptFramework::Memory::ReadFloat(amount, false);
+				args->Amount = args->OriginalAmount;
+				return args;
+			}
+		private: static void __after_GainSkillXP_Modern(NetScriptFramework::CPURegisters^ ctx, GainSkillXPEventArgs^ args)
+			{
+				if(args->Amount != args->OriginalAmount)
+					NetScriptFramework::Memory::WriteFloat(ctx->SP + 0x1B8, args->Amount, false);
 			}
 
 		private: static NetScriptFramework::Event<InterruptCastEventArgs^>^ __handler_InterruptCast;
@@ -1223,7 +1257,16 @@ namespace NetScriptFramework
 					args->ExtraData = NetScriptFramework::MemoryObject::FromAddress<BSExtraDataList^>(NetScriptFramework::Memory::ReadPointer(args->DataPtr, false));
 				return args;
 			}
-		private: static void __after_PreEquipItem(NetScriptFramework::CPURegisters^ ctx, PreEquipItemEventArgs^ args)
+		private: static PreEquipItemEventArgs^ __before_PreEquipItem_Modern(NetScriptFramework::CPURegisters^ ctx)
+			{
+				// EquipObject saves the actor, item and extra data from RDX, R8 and R9.
+				PreEquipItemEventArgs^ args = gcnew PreEquipItemEventArgs();
+				args->Who = NetScriptFramework::MemoryObject::FromAddress<Actor^>(ctx->R14);
+				args->Item = NetScriptFramework::MemoryObject::FromAddress<TESForm^>(ctx->BP);
+				args->ExtraData = NetScriptFramework::MemoryObject::FromAddress<BSExtraDataList^>(ctx->DI);
+				return args;
+			}
+		private: static void __show_PreEquipItemMessage(PreEquipItemEventArgs^ args)
 			{
 				if(args->Message != nullptr && args->Message->Length != 0)
 				{
@@ -1238,8 +1281,19 @@ namespace NetScriptFramework
 						delete alloc;
 					}
 				}
+			}
+		private: static void __after_PreEquipItem(NetScriptFramework::CPURegisters^ ctx, PreEquipItemEventArgs^ args)
+			{
+				__show_PreEquipItemMessage(args);
 				if(args->Skip)
 					ctx->IP = ctx->IP + 0x8ED;
+			}
+		private: static void __after_PreEquipItem_Modern(NetScriptFramework::CPURegisters^ ctx, PreEquipItemEventArgs^ args)
+			{
+				__show_PreEquipItemMessage(args);
+				// Resume at EquipObject's shared lock-release path.
+				if(args->Skip)
+					ctx->IP = ctx->IP + 0x81;
 			}
 
 		private: static NetScriptFramework::Event<ReduceHUDAmmoCounterEventArgs^>^ __handler_ReduceHUDAmmoCounter;
@@ -1259,6 +1313,14 @@ namespace NetScriptFramework
 				ReduceHUDAmmoCounterEventArgs^ args = gcnew ReduceHUDAmmoCounterEventArgs();
 				args->HasAmount = (int)(MCH::u(ctx->AX) & 0xFFFFFFFF);
 				args->Item = NetScriptFramework::MemoryObject::FromAddress<ExtraContainerChanges::ItemEntry^>(ctx->R14);
+				args->ReduceAmount = 1;
+				return args;
+			}
+		private: static ReduceHUDAmmoCounterEventArgs^ __before_ReduceHUDAmmoCounter_Modern(NetScriptFramework::CPURegisters^ ctx)
+			{
+				ReduceHUDAmmoCounterEventArgs^ args = gcnew ReduceHUDAmmoCounterEventArgs();
+				args->HasAmount = (int)(MCH::u(ctx->AX) & 0xFFFFFFFF);
+				args->Item = NetScriptFramework::MemoryObject::FromAddress<ExtraContainerChanges::ItemEntry^>(ctx->R15);
 				args->ReduceAmount = 1;
 				return args;
 			}
@@ -1505,6 +1567,14 @@ namespace NetScriptFramework
 				args->Skip = false;
 				return args;
 			}
+		private: static SpendPoisonEventArgs^ __before_SpendPoison_RangedModern(NetScriptFramework::CPURegisters^ ctx)
+			{
+				SpendPoisonEventArgs^ args = gcnew SpendPoisonEventArgs();
+				args->Spender = NetScriptFramework::MemoryObject::FromAddress<Actor^>(ctx->BP);
+				args->Item = NetScriptFramework::MemoryObject::FromAddress<ExtraContainerChanges::ItemEntry^>(ctx->DI);
+				args->Skip = false;
+				return args;
+			}
 		private: static void __after_SpendPoison_2(NetScriptFramework::CPURegisters^ ctx, SpendPoisonEventArgs^ args)
 			{
 				if(args->Skip) ctx->Skip();
@@ -1639,9 +1709,17 @@ namespace NetScriptFramework
 				ctx->BX = ptr;
 			}
 
+		private: static void __after_WeaponFireProjectilePosition_Modern(NetScriptFramework::CPURegisters^ ctx, WeaponFireProjectilePositionEventArgs^ args)
+			{
+				// The replayed instructions copy RAX into RSI.
+				ctx->AX = args->Node != nullptr ? args->Node->Cast<NiAVObject^>() : System::IntPtr::Zero;
+			}
+
 		internal:
 			static void InitializeEvents()
 			{
+				bool legacyLayout = NetScriptFramework::Main::Game->GameVersion[1] < 7;
+
 				__handler_BarterMenu = gcnew NetScriptFramework::EventHook<BarterMenuEventArgs^>(
 					NetScriptFramework::EventHookFlags::None, "BarterMenu",
 					gcnew NetScriptFramework::EventHookParameters<BarterMenuEventArgs^>(
@@ -1678,9 +1756,27 @@ namespace NetScriptFramework
 					gcnew NetScriptFramework::EventHookParameters<CameraStateChangingEventArgs^>(
 						"CameraStateChanging", __VIDS::VID32290, 0, 5, 5, "48 89 5C 24 08",
 						gcnew System::Func<NetScriptFramework::CPURegisters^, CameraStateChangingEventArgs^>(__before_CameraStateChanging), gcnew System::Action<NetScriptFramework::CPURegisters^, CameraStateChangingEventArgs^>(__after_CameraStateChanging)));
-				__handler_Frame = gcnew NetScriptFramework::EventHook<FrameEventArgs^>(NetScriptFramework::EventHookFlags::None, "Frame", gcnew NetScriptFramework::EventHookParameters<FrameEventArgs^>(__VIDS::VID35565.Value+0x1E, 5, 5, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, FrameEventArgs^>(__before_Frame), nullptr));
-				__handler_GainLevelXP = gcnew NetScriptFramework::EventHook<GainLevelXPEventArgs^>(NetScriptFramework::EventHookFlags::None, "GainLevelXP", gcnew NetScriptFramework::EventHookParameters<GainLevelXPEventArgs^>(__VIDS::VID40554.Value+0x230, 6, 6, "F3 0F 58 01 8B D6", gcnew System::Func<NetScriptFramework::CPURegisters^, GainLevelXPEventArgs^>(__before_GainLevelXP), gcnew System::Action<NetScriptFramework::CPURegisters^, GainLevelXPEventArgs^>(__after_GainLevelXP)));
-				__handler_GainSkillXP = gcnew NetScriptFramework::EventHook<GainSkillXPEventArgs^>(NetScriptFramework::EventHookFlags::AlwaysRun, "GainSkillXP", gcnew NetScriptFramework::EventHookParameters<GainSkillXPEventArgs^>(__VIDS::VID40554.Value+0x143, 5, 0, "E8 ? ? ? ? 48 8B 05", gcnew System::Func<NetScriptFramework::CPURegisters^, GainSkillXPEventArgs^>(__before_GainSkillXP), gcnew System::Action<NetScriptFramework::CPURegisters^, GainSkillXPEventArgs^>(__after_GainSkillXP)));
+				__handler_Frame = gcnew NetScriptFramework::EventHook<FrameEventArgs^>(
+					NetScriptFramework::EventHookFlags::None, "Frame",
+					gcnew NetScriptFramework::EventHookParameters<FrameEventArgs^>(
+						"Frame", __VIDS::VID35565, 0x1E, 5, 5, "E8",
+						gcnew System::Func<NetScriptFramework::CPURegisters^, FrameEventArgs^>(__before_Frame), nullptr));
+				__handler_GainLevelXP = gcnew NetScriptFramework::EventHook<GainLevelXPEventArgs^>(
+					NetScriptFramework::EventHookFlags::None, "GainLevelXP",
+					gcnew NetScriptFramework::EventHookParameters<GainLevelXPEventArgs^>(
+						"GainLevelXP", __VIDS::VID40554, 0x230, 6, 6, "F3 0F 58 01 8B D6",
+						legacyLayout ? gcnew System::Func<NetScriptFramework::CPURegisters^, GainLevelXPEventArgs^>(__before_GainLevelXP)
+							: gcnew System::Func<NetScriptFramework::CPURegisters^, GainLevelXPEventArgs^>(__before_GainLevelXP_Modern),
+						legacyLayout ? gcnew System::Action<NetScriptFramework::CPURegisters^, GainLevelXPEventArgs^>(__after_GainLevelXP)
+							: gcnew System::Action<NetScriptFramework::CPURegisters^, GainLevelXPEventArgs^>(__after_GainLevelXP_Modern)));
+				__handler_GainSkillXP = gcnew NetScriptFramework::EventHook<GainSkillXPEventArgs^>(
+					NetScriptFramework::EventHookFlags::AlwaysRun, "GainSkillXP",
+					gcnew NetScriptFramework::EventHookParameters<GainSkillXPEventArgs^>(
+						"GainSkillXP", __VIDS::VID40554, 0x143, 5, 0, "E8 ? ? ? ? 48 8B 05",
+						legacyLayout ? gcnew System::Func<NetScriptFramework::CPURegisters^, GainSkillXPEventArgs^>(__before_GainSkillXP)
+							: gcnew System::Func<NetScriptFramework::CPURegisters^, GainSkillXPEventArgs^>(__before_GainSkillXP_Modern),
+						legacyLayout ? gcnew System::Action<NetScriptFramework::CPURegisters^, GainSkillXPEventArgs^>(__after_GainSkillXP)
+							: gcnew System::Action<NetScriptFramework::CPURegisters^, GainSkillXPEventArgs^>(__after_GainSkillXP_Modern)));
 				__handler_InterruptCast = gcnew NetScriptFramework::EventHook<InterruptCastEventArgs^>(
 					NetScriptFramework::EventHookFlags::None, "InterruptCast",
 					gcnew NetScriptFramework::EventHookParameters<InterruptCastEventArgs^>(
@@ -1691,24 +1787,99 @@ namespace NetScriptFramework
 					gcnew NetScriptFramework::EventHookParameters<MagicCasterFireEventArgs^>(
 						"MagicCasterFire", __VIDS::VID33629, 0xF7, 6, 6, "4C 8B 17 4C 8B CE",
 						gcnew System::Func<NetScriptFramework::CPURegisters^, MagicCasterFireEventArgs^>(__before_MagicCasterFire), nullptr));
-				__handler_MainMenu = gcnew NetScriptFramework::EventHook<MainMenuEventArgs^>(NetScriptFramework::EventHookFlags::None, "MainMenu", gcnew NetScriptFramework::EventHookParameters<MainMenuEventArgs^>(__VIDS::VID51324.Value+0x19, 5, 5, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, MainMenuEventArgs^>(__before_MainMenu_1), nullptr), gcnew NetScriptFramework::EventHookParameters<MainMenuEventArgs^>(__VIDS::VID51236.Value, 5, 5, "48 89 4C 24 08", gcnew System::Func<NetScriptFramework::CPURegisters^, MainMenuEventArgs^>(__before_MainMenu_2), nullptr));
-				__handler_PreEquipItem = gcnew NetScriptFramework::EventHook<PreEquipItemEventArgs^>(NetScriptFramework::EventHookFlags::None, "PreEquipItem", gcnew NetScriptFramework::EventHookParameters<PreEquipItemEventArgs^>(__VIDS::VID36976.Value+5, 8, 8, "41 54 41 55 41 56 41 57", gcnew System::Func<NetScriptFramework::CPURegisters^, PreEquipItemEventArgs^>(__before_PreEquipItem), gcnew System::Action<NetScriptFramework::CPURegisters^, PreEquipItemEventArgs^>(__after_PreEquipItem)));
-				__handler_ReduceHUDAmmoCounter = gcnew NetScriptFramework::EventHook<ReduceHUDAmmoCounterEventArgs^>(NetScriptFramework::EventHookFlags::AlwaysRun, "ReduceHUDAmmoCounter", gcnew NetScriptFramework::EventHookParameters<ReduceHUDAmmoCounterEventArgs^>(__VIDS::VID42928.Value+0x63A, 7, -5, "E8 ?? ?? ?? ?? FF C8", gcnew System::Func<NetScriptFramework::CPURegisters^, ReduceHUDAmmoCounterEventArgs^>(__before_ReduceHUDAmmoCounter), gcnew System::Action<NetScriptFramework::CPURegisters^, ReduceHUDAmmoCounterEventArgs^>(__after_ReduceHUDAmmoCounter)));
-				__handler_RemoveMagicEffectsWithArchetype = gcnew NetScriptFramework::EventHook<RemoveMagicEffectsWithArchetypeEventArgs^>(NetScriptFramework::EventHookFlags::None, "RemoveMagicEffectsWithArchetype", gcnew NetScriptFramework::EventHookParameters<RemoveMagicEffectsWithArchetypeEventArgs^>(__VIDS::VID37864.Value+0x2B, 5, 5, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, RemoveMagicEffectsWithArchetypeEventArgs^>(__before_RemoveMagicEffectsWithArchetype_1), gcnew System::Action<NetScriptFramework::CPURegisters^, RemoveMagicEffectsWithArchetypeEventArgs^>(__after_RemoveMagicEffectsWithArchetype_1)), gcnew NetScriptFramework::EventHookParameters<RemoveMagicEffectsWithArchetypeEventArgs^>(__VIDS::VID37864.Value+0x4F, 5, 5, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, RemoveMagicEffectsWithArchetypeEventArgs^>(__before_RemoveMagicEffectsWithArchetype_2), gcnew System::Action<NetScriptFramework::CPURegisters^, RemoveMagicEffectsWithArchetypeEventArgs^>(__after_RemoveMagicEffectsWithArchetype_2)), gcnew NetScriptFramework::EventHookParameters<RemoveMagicEffectsWithArchetypeEventArgs^>(__VIDS::VID37672.Value+0xB9, 5, 5, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, RemoveMagicEffectsWithArchetypeEventArgs^>(__before_RemoveMagicEffectsWithArchetype_3), gcnew System::Action<NetScriptFramework::CPURegisters^, RemoveMagicEffectsWithArchetypeEventArgs^>(__after_RemoveMagicEffectsWithArchetype_3)));
-				__handler_ShadowCullingBegin = gcnew NetScriptFramework::EventHook<ShadowCullingBeginEventArgs^>(NetScriptFramework::EventHookFlags::AlwaysRun, "ShadowCullingBegin", gcnew NetScriptFramework::EventHookParameters<ShadowCullingBeginEventArgs^>(__VIDS::VID100414.Value+0x2CC, 5, 0, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, ShadowCullingBeginEventArgs^>(__before_ShadowCullingBegin), gcnew System::Action<NetScriptFramework::CPURegisters^, ShadowCullingBeginEventArgs^>(__after_ShadowCullingBegin)));
-				__handler_ShadowCullingEnd = gcnew NetScriptFramework::EventHook<ShadowCullingEndEventArgs^>(NetScriptFramework::EventHookFlags::AlwaysRun, "ShadowCullingEnd", gcnew NetScriptFramework::EventHookParameters<ShadowCullingEndEventArgs^>(__VIDS::VID100414.Value+0x2D1, 0x12, 0, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, ShadowCullingEndEventArgs^>(__before_ShadowCullingEnd), gcnew System::Action<NetScriptFramework::CPURegisters^, ShadowCullingEndEventArgs^>(__after_ShadowCullingEnd)));
+				__handler_MainMenu = gcnew NetScriptFramework::EventHook<MainMenuEventArgs^>(
+					NetScriptFramework::EventHookFlags::None, "MainMenu",
+					gcnew NetScriptFramework::EventHookParameters<MainMenuEventArgs^>(
+						"MainMenu.Exit", __VIDS::VID51324, 0x19, 5, 5, "E8",
+						gcnew System::Func<NetScriptFramework::CPURegisters^, MainMenuEventArgs^>(__before_MainMenu_1), nullptr),
+					gcnew NetScriptFramework::EventHookParameters<MainMenuEventArgs^>(
+						"MainMenu.Enter", __VIDS::VID51236, 0, 5, 5, "48 89 4C 24 08",
+						gcnew System::Func<NetScriptFramework::CPURegisters^, MainMenuEventArgs^>(__before_MainMenu_2), nullptr));
+				__handler_PreEquipItem = gcnew NetScriptFramework::EventHook<PreEquipItemEventArgs^>(
+					NetScriptFramework::EventHookFlags::None, "PreEquipItem",
+					gcnew NetScriptFramework::EventHookParameters<PreEquipItemEventArgs^>(
+						"PreEquipItem", __VIDS::VID36976, 5, 8, 8, "41 54 41 55 41 56 41 57",
+						legacyLayout ? gcnew System::Func<NetScriptFramework::CPURegisters^, PreEquipItemEventArgs^>(__before_PreEquipItem)
+							: gcnew System::Func<NetScriptFramework::CPURegisters^, PreEquipItemEventArgs^>(__before_PreEquipItem_Modern),
+						legacyLayout ? gcnew System::Action<NetScriptFramework::CPURegisters^, PreEquipItemEventArgs^>(__after_PreEquipItem)
+							: gcnew System::Action<NetScriptFramework::CPURegisters^, PreEquipItemEventArgs^>(__after_PreEquipItem_Modern)));
+				__handler_ReduceHUDAmmoCounter = gcnew NetScriptFramework::EventHook<ReduceHUDAmmoCounterEventArgs^>(
+					NetScriptFramework::EventHookFlags::AlwaysRun, "ReduceHUDAmmoCounter",
+					gcnew NetScriptFramework::EventHookParameters<ReduceHUDAmmoCounterEventArgs^>(
+						"ReduceHUDAmmoCounter", __VIDS::VID42928, 0x63A, 7, -5, "E8 ?? ?? ?? ?? FF C8",
+						legacyLayout ? gcnew System::Func<NetScriptFramework::CPURegisters^, ReduceHUDAmmoCounterEventArgs^>(__before_ReduceHUDAmmoCounter)
+							: gcnew System::Func<NetScriptFramework::CPURegisters^, ReduceHUDAmmoCounterEventArgs^>(__before_ReduceHUDAmmoCounter_Modern),
+						gcnew System::Action<NetScriptFramework::CPURegisters^, ReduceHUDAmmoCounterEventArgs^>(__after_ReduceHUDAmmoCounter)));
+				auto attacked = gcnew NetScriptFramework::EventHookParameters<RemoveMagicEffectsWithArchetypeEventArgs^>(
+					"RemoveMagicEffectsWithArchetype.Attacked", __VIDS::VID37672, 0xB9, 5, 5, "E8",
+					gcnew System::Func<NetScriptFramework::CPURegisters^, RemoveMagicEffectsWithArchetypeEventArgs^>(__before_RemoveMagicEffectsWithArchetype_3),
+					gcnew System::Action<NetScriptFramework::CPURegisters^, RemoveMagicEffectsWithArchetypeEventArgs^>(__after_RemoveMagicEffectsWithArchetype_3));
+				if(legacyLayout)
+				{
+					__handler_RemoveMagicEffectsWithArchetype = gcnew NetScriptFramework::EventHook<RemoveMagicEffectsWithArchetypeEventArgs^>(
+						NetScriptFramework::EventHookFlags::None, "RemoveMagicEffectsWithArchetype",
+						gcnew NetScriptFramework::EventHookParameters<RemoveMagicEffectsWithArchetypeEventArgs^>(
+							__VIDS::VID37864.Value+0x2B, 5, 5, "E8",
+							gcnew System::Func<NetScriptFramework::CPURegisters^, RemoveMagicEffectsWithArchetypeEventArgs^>(__before_RemoveMagicEffectsWithArchetype_1),
+							gcnew System::Action<NetScriptFramework::CPURegisters^, RemoveMagicEffectsWithArchetypeEventArgs^>(__after_RemoveMagicEffectsWithArchetype_1)),
+						gcnew NetScriptFramework::EventHookParameters<RemoveMagicEffectsWithArchetypeEventArgs^>(
+							__VIDS::VID37864.Value+0x4F, 5, 5, "E8",
+							gcnew System::Func<NetScriptFramework::CPURegisters^, RemoveMagicEffectsWithArchetypeEventArgs^>(__before_RemoveMagicEffectsWithArchetype_2),
+							gcnew System::Action<NetScriptFramework::CPURegisters^, RemoveMagicEffectsWithArchetypeEventArgs^>(__after_RemoveMagicEffectsWithArchetype_2)),
+						attacked);
+				}
+				else
+					__handler_RemoveMagicEffectsWithArchetype = gcnew NetScriptFramework::EventHook<RemoveMagicEffectsWithArchetypeEventArgs^>(
+						NetScriptFramework::EventHookFlags::None, "RemoveMagicEffectsWithArchetype", attacked);
 				__handler_SpendAmmo = gcnew NetScriptFramework::EventHook<SpendAmmoEventArgs^>(
 					NetScriptFramework::EventHookFlags::None, "SpendAmmo",
 					gcnew NetScriptFramework::EventHookParameters<SpendAmmoEventArgs^>(
 						"SpendAmmo", __VIDS::VID37596, 0x84, 5, -5, "E8",
 						gcnew System::Func<NetScriptFramework::CPURegisters^, SpendAmmoEventArgs^>(__before_SpendAmmo), gcnew System::Action<NetScriptFramework::CPURegisters^, SpendAmmoEventArgs^>(__after_SpendAmmo)));
-				__handler_SpendMagicCost = gcnew NetScriptFramework::EventHook<SpendMagicCostEventArgs^>(NetScriptFramework::EventHookFlags::None, "SpendMagicCost", gcnew NetScriptFramework::EventHookParameters<SpendMagicCostEventArgs^>(__VIDS::VID33362.Value+0x156, 6, 6, "44 8B F8 83 F8 FF", gcnew System::Func<NetScriptFramework::CPURegisters^, SpendMagicCostEventArgs^>(__before_SpendMagicCost), gcnew System::Action<NetScriptFramework::CPURegisters^, SpendMagicCostEventArgs^>(__after_SpendMagicCost)));
-				__handler_SpendPoison = gcnew NetScriptFramework::EventHook<SpendPoisonEventArgs^>(NetScriptFramework::EventHookFlags::None, "SpendPoison", gcnew NetScriptFramework::EventHookParameters<SpendPoisonEventArgs^>(__VIDS::VID37799.Value+0x188, 5, 5, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, SpendPoisonEventArgs^>(__before_SpendPoison_1), gcnew System::Action<NetScriptFramework::CPURegisters^, SpendPoisonEventArgs^>(__after_SpendPoison_1)), gcnew NetScriptFramework::EventHookParameters<SpendPoisonEventArgs^>(__VIDS::VID41778.Value+0x169, 5, 5, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, SpendPoisonEventArgs^>(__before_SpendPoison_2), gcnew System::Action<NetScriptFramework::CPURegisters^, SpendPoisonEventArgs^>(__after_SpendPoison_2)));
-				__handler_UpdateCamera = gcnew NetScriptFramework::EventHook<UpdateCameraEventArgs^>(NetScriptFramework::EventHookFlags::None, "UpdateCamera", gcnew NetScriptFramework::EventHookParameters<UpdateCameraEventArgs^>(__VIDS::VID32289.Value+0x4A, 5, 5, "48 8B 5C 24 40", gcnew System::Func<NetScriptFramework::CPURegisters^, UpdateCameraEventArgs^>(__before_UpdateCamera), nullptr));
-				__handler_UpdatedPlayerHeadtrack = gcnew NetScriptFramework::EventHook<UpdatedPlayerHeadtrackEventArgs^>(NetScriptFramework::EventHookFlags::None, "UpdatedPlayerHeadtrack", gcnew NetScriptFramework::EventHookParameters<UpdatedPlayerHeadtrackEventArgs^>(__VIDS::VID39375.Value+0xC26, 8, 8, "F3 0F 10 87 10 0A 00 00", gcnew System::Func<NetScriptFramework::CPURegisters^, UpdatedPlayerHeadtrackEventArgs^>(__before_UpdatedPlayerHeadtrack), nullptr));
-				__handler_UpdatePlayerControls = gcnew NetScriptFramework::EventHook<UpdatePlayerControlsEventArgs^>(NetScriptFramework::EventHookFlags::AlwaysRun, "UpdatePlayerControls", gcnew NetScriptFramework::EventHookParameters<UpdatePlayerControlsEventArgs^>(__VIDS::VID41259.Value+0x88, 6, 0, "80 7B 4F 00 74 0C", gcnew System::Func<NetScriptFramework::CPURegisters^, UpdatePlayerControlsEventArgs^>(__before_UpdatePlayerControls), gcnew System::Action<NetScriptFramework::CPURegisters^, UpdatePlayerControlsEventArgs^>(__after_UpdatePlayerControls)));
-				__handler_UpdatePlayerTurnToCamera = gcnew NetScriptFramework::EventHook<UpdatePlayerTurnToCameraEventArgs^>(NetScriptFramework::EventHookFlags::None, "UpdatePlayerTurnToCamera", gcnew NetScriptFramework::EventHookParameters<UpdatePlayerTurnToCameraEventArgs^>(__VIDS::VID49968.Value+0x93, 7, 7, "40 38 BB DC 00 00 00", gcnew System::Func<NetScriptFramework::CPURegisters^, UpdatePlayerTurnToCameraEventArgs^>(__before_UpdatePlayerTurnToCamera), gcnew System::Action<NetScriptFramework::CPURegisters^, UpdatePlayerTurnToCameraEventArgs^>(__after_UpdatePlayerTurnToCamera)));
-				__handler_WeaponFireProjectilePosition = gcnew NetScriptFramework::EventHook<WeaponFireProjectilePositionEventArgs^>(NetScriptFramework::EventHookFlags::None, "WeaponFireProjectilePosition", gcnew NetScriptFramework::EventHookParameters<WeaponFireProjectilePositionEventArgs^>(__VIDS::VID17693.Value+0x2A9, 7, 7, "45 0F 57 DB 48 85 C0", gcnew System::Func<NetScriptFramework::CPURegisters^, WeaponFireProjectilePositionEventArgs^>(__before_WeaponFireProjectilePosition), gcnew System::Action<NetScriptFramework::CPURegisters^, WeaponFireProjectilePositionEventArgs^>(__after_WeaponFireProjectilePosition)));
+				__handler_SpendMagicCost = gcnew NetScriptFramework::EventHook<SpendMagicCostEventArgs^>(
+					NetScriptFramework::EventHookFlags::None, "SpendMagicCost",
+					gcnew NetScriptFramework::EventHookParameters<SpendMagicCostEventArgs^>(
+						"SpendMagicCost", __VIDS::VID33362, 0x156, 6, 6, "44 8B F8 83 F8 FF",
+						gcnew System::Func<NetScriptFramework::CPURegisters^, SpendMagicCostEventArgs^>(__before_SpendMagicCost),
+						gcnew System::Action<NetScriptFramework::CPURegisters^, SpendMagicCostEventArgs^>(__after_SpendMagicCost)));
+				__handler_SpendPoison = gcnew NetScriptFramework::EventHook<SpendPoisonEventArgs^>(
+					NetScriptFramework::EventHookFlags::None, "SpendPoison",
+					gcnew NetScriptFramework::EventHookParameters<SpendPoisonEventArgs^>(
+						"SpendPoison.Melee", __VIDS::VID37799, 0x188, 5, 5, "E8",
+						gcnew System::Func<NetScriptFramework::CPURegisters^, SpendPoisonEventArgs^>(__before_SpendPoison_1),
+						gcnew System::Action<NetScriptFramework::CPURegisters^, SpendPoisonEventArgs^>(__after_SpendPoison_1)),
+					gcnew NetScriptFramework::EventHookParameters<SpendPoisonEventArgs^>(
+						"SpendPoison.Ranged", __VIDS::VID41778, 0x169, 5, 5, "E8",
+						legacyLayout ? gcnew System::Func<NetScriptFramework::CPURegisters^, SpendPoisonEventArgs^>(__before_SpendPoison_2)
+							: gcnew System::Func<NetScriptFramework::CPURegisters^, SpendPoisonEventArgs^>(__before_SpendPoison_RangedModern),
+						gcnew System::Action<NetScriptFramework::CPURegisters^, SpendPoisonEventArgs^>(__after_SpendPoison_2)));
+				__handler_WeaponFireProjectilePosition = gcnew NetScriptFramework::EventHook<WeaponFireProjectilePositionEventArgs^>(
+					NetScriptFramework::EventHookFlags::None, "WeaponFireProjectilePosition",
+					gcnew NetScriptFramework::EventHookParameters<WeaponFireProjectilePositionEventArgs^>(
+						"WeaponFireProjectilePosition", __VIDS::VID17693, 0x2A9, 7, 7, "45 0F 57 DB 48 85 C0",
+						gcnew System::Func<NetScriptFramework::CPURegisters^, WeaponFireProjectilePositionEventArgs^>(__before_WeaponFireProjectilePosition),
+						legacyLayout ? gcnew System::Action<NetScriptFramework::CPURegisters^, WeaponFireProjectilePositionEventArgs^>(__after_WeaponFireProjectilePosition)
+							: gcnew System::Action<NetScriptFramework::CPURegisters^, WeaponFireProjectilePositionEventArgs^>(__after_WeaponFireProjectilePosition_Modern)));
+
+				if(legacyLayout)
+				{
+					__handler_ShadowCullingBegin = gcnew NetScriptFramework::EventHook<ShadowCullingBeginEventArgs^>(NetScriptFramework::EventHookFlags::AlwaysRun, "ShadowCullingBegin", gcnew NetScriptFramework::EventHookParameters<ShadowCullingBeginEventArgs^>(__VIDS::VID100414.Value+0x2CC, 5, 0, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, ShadowCullingBeginEventArgs^>(__before_ShadowCullingBegin), gcnew System::Action<NetScriptFramework::CPURegisters^, ShadowCullingBeginEventArgs^>(__after_ShadowCullingBegin)));
+					__handler_ShadowCullingEnd = gcnew NetScriptFramework::EventHook<ShadowCullingEndEventArgs^>(NetScriptFramework::EventHookFlags::AlwaysRun, "ShadowCullingEnd", gcnew NetScriptFramework::EventHookParameters<ShadowCullingEndEventArgs^>(__VIDS::VID100414.Value+0x2D1, 0x12, 0, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, ShadowCullingEndEventArgs^>(__before_ShadowCullingEnd), gcnew System::Action<NetScriptFramework::CPURegisters^, ShadowCullingEndEventArgs^>(__after_ShadowCullingEnd)));
+					__handler_UpdateCamera = gcnew NetScriptFramework::EventHook<UpdateCameraEventArgs^>(NetScriptFramework::EventHookFlags::None, "UpdateCamera", gcnew NetScriptFramework::EventHookParameters<UpdateCameraEventArgs^>(__VIDS::VID32289.Value+0x4A, 5, 5, "48 8B 5C 24 40", gcnew System::Func<NetScriptFramework::CPURegisters^, UpdateCameraEventArgs^>(__before_UpdateCamera), nullptr));
+					__handler_UpdatedPlayerHeadtrack = gcnew NetScriptFramework::EventHook<UpdatedPlayerHeadtrackEventArgs^>(NetScriptFramework::EventHookFlags::None, "UpdatedPlayerHeadtrack", gcnew NetScriptFramework::EventHookParameters<UpdatedPlayerHeadtrackEventArgs^>(__VIDS::VID39375.Value+0xC26, 8, 8, "F3 0F 10 87 10 0A 00 00", gcnew System::Func<NetScriptFramework::CPURegisters^, UpdatedPlayerHeadtrackEventArgs^>(__before_UpdatedPlayerHeadtrack), nullptr));
+					__handler_UpdatePlayerControls = gcnew NetScriptFramework::EventHook<UpdatePlayerControlsEventArgs^>(NetScriptFramework::EventHookFlags::AlwaysRun, "UpdatePlayerControls", gcnew NetScriptFramework::EventHookParameters<UpdatePlayerControlsEventArgs^>(__VIDS::VID41259.Value+0x88, 6, 0, "80 7B 4F 00 74 0C", gcnew System::Func<NetScriptFramework::CPURegisters^, UpdatePlayerControlsEventArgs^>(__before_UpdatePlayerControls), gcnew System::Action<NetScriptFramework::CPURegisters^, UpdatePlayerControlsEventArgs^>(__after_UpdatePlayerControls)));
+					__handler_UpdatePlayerTurnToCamera = gcnew NetScriptFramework::EventHook<UpdatePlayerTurnToCameraEventArgs^>(NetScriptFramework::EventHookFlags::None, "UpdatePlayerTurnToCamera", gcnew NetScriptFramework::EventHookParameters<UpdatePlayerTurnToCameraEventArgs^>(__VIDS::VID49968.Value+0x93, 7, 7, "40 38 BB DC 00 00 00", gcnew System::Func<NetScriptFramework::CPURegisters^, UpdatePlayerTurnToCameraEventArgs^>(__before_UpdatePlayerTurnToCamera), gcnew System::Action<NetScriptFramework::CPURegisters^, UpdatePlayerTurnToCameraEventArgs^>(__after_UpdatePlayerTurnToCamera)));
+				}
+				else
+				{
+					// These events have no mapped native sites on this layout.
+					__handler_ShadowCullingBegin = gcnew NetScriptFramework::Event<ShadowCullingBeginEventArgs^>("ShadowCullingBegin");
+					__handler_ShadowCullingEnd = gcnew NetScriptFramework::Event<ShadowCullingEndEventArgs^>("ShadowCullingEnd");
+					__handler_UpdateCamera = gcnew NetScriptFramework::Event<UpdateCameraEventArgs^>("UpdateCamera");
+					__handler_UpdatedPlayerHeadtrack = gcnew NetScriptFramework::Event<UpdatedPlayerHeadtrackEventArgs^>("UpdatedPlayerHeadtrack");
+					__handler_UpdatePlayerControls = gcnew NetScriptFramework::Event<UpdatePlayerControlsEventArgs^>("UpdatePlayerControls");
+					__handler_UpdatePlayerTurnToCamera = gcnew NetScriptFramework::Event<UpdatePlayerTurnToCameraEventArgs^>("UpdatePlayerTurnToCamera");
+				}
 			}
 		};
 	}
