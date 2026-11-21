@@ -1599,6 +1599,13 @@ namespace NetScriptFramework
 				return args;
 			}
 
+		private: static UpdateCameraEventArgs^ __before_UpdateCamera_Modern(NetScriptFramework::CPURegisters^ ctx)
+			{
+				UpdateCameraEventArgs^ args = gcnew UpdateCameraEventArgs();
+				args->Camera = NetScriptFramework::MemoryObject::FromAddress<TESCamera^>(ctx->BX);
+				return args;
+			}
+
 		private: static NetScriptFramework::Event<UpdatedPlayerHeadtrackEventArgs^>^ __handler_UpdatedPlayerHeadtrack;
 		public:
 			/// <summary>
@@ -1861,11 +1868,17 @@ namespace NetScriptFramework
 						legacyLayout ? gcnew System::Action<NetScriptFramework::CPURegisters^, WeaponFireProjectilePositionEventArgs^>(__after_WeaponFireProjectilePosition)
 							: gcnew System::Action<NetScriptFramework::CPURegisters^, WeaponFireProjectilePositionEventArgs^>(__after_WeaponFireProjectilePosition_Modern)));
 
+				__handler_UpdateCamera = gcnew NetScriptFramework::EventHook<UpdateCameraEventArgs^>(
+					NetScriptFramework::EventHookFlags::None, "UpdateCamera",
+					gcnew NetScriptFramework::EventHookParameters<UpdateCameraEventArgs^>(
+						"UpdateCamera", __VIDS::VID32289, 0x4A, 5, 5, "48 8B 5C 24 40",
+						legacyLayout ? gcnew System::Func<NetScriptFramework::CPURegisters^, UpdateCameraEventArgs^>(__before_UpdateCamera)
+							: gcnew System::Func<NetScriptFramework::CPURegisters^, UpdateCameraEventArgs^>(__before_UpdateCamera_Modern), nullptr));
+
 				if(legacyLayout)
 				{
 					__handler_ShadowCullingBegin = gcnew NetScriptFramework::EventHook<ShadowCullingBeginEventArgs^>(NetScriptFramework::EventHookFlags::AlwaysRun, "ShadowCullingBegin", gcnew NetScriptFramework::EventHookParameters<ShadowCullingBeginEventArgs^>(__VIDS::VID100414.Value+0x2CC, 5, 0, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, ShadowCullingBeginEventArgs^>(__before_ShadowCullingBegin), gcnew System::Action<NetScriptFramework::CPURegisters^, ShadowCullingBeginEventArgs^>(__after_ShadowCullingBegin)));
 					__handler_ShadowCullingEnd = gcnew NetScriptFramework::EventHook<ShadowCullingEndEventArgs^>(NetScriptFramework::EventHookFlags::AlwaysRun, "ShadowCullingEnd", gcnew NetScriptFramework::EventHookParameters<ShadowCullingEndEventArgs^>(__VIDS::VID100414.Value+0x2D1, 0x12, 0, "E8", gcnew System::Func<NetScriptFramework::CPURegisters^, ShadowCullingEndEventArgs^>(__before_ShadowCullingEnd), gcnew System::Action<NetScriptFramework::CPURegisters^, ShadowCullingEndEventArgs^>(__after_ShadowCullingEnd)));
-					__handler_UpdateCamera = gcnew NetScriptFramework::EventHook<UpdateCameraEventArgs^>(NetScriptFramework::EventHookFlags::None, "UpdateCamera", gcnew NetScriptFramework::EventHookParameters<UpdateCameraEventArgs^>(__VIDS::VID32289.Value+0x4A, 5, 5, "48 8B 5C 24 40", gcnew System::Func<NetScriptFramework::CPURegisters^, UpdateCameraEventArgs^>(__before_UpdateCamera), nullptr));
 					__handler_UpdatedPlayerHeadtrack = gcnew NetScriptFramework::EventHook<UpdatedPlayerHeadtrackEventArgs^>(NetScriptFramework::EventHookFlags::None, "UpdatedPlayerHeadtrack", gcnew NetScriptFramework::EventHookParameters<UpdatedPlayerHeadtrackEventArgs^>(__VIDS::VID39375.Value+0xC26, 8, 8, "F3 0F 10 87 10 0A 00 00", gcnew System::Func<NetScriptFramework::CPURegisters^, UpdatedPlayerHeadtrackEventArgs^>(__before_UpdatedPlayerHeadtrack), nullptr));
 					__handler_UpdatePlayerControls = gcnew NetScriptFramework::EventHook<UpdatePlayerControlsEventArgs^>(NetScriptFramework::EventHookFlags::AlwaysRun, "UpdatePlayerControls", gcnew NetScriptFramework::EventHookParameters<UpdatePlayerControlsEventArgs^>(__VIDS::VID41259.Value+0x88, 6, 0, "80 7B 4F 00 74 0C", gcnew System::Func<NetScriptFramework::CPURegisters^, UpdatePlayerControlsEventArgs^>(__before_UpdatePlayerControls), gcnew System::Action<NetScriptFramework::CPURegisters^, UpdatePlayerControlsEventArgs^>(__after_UpdatePlayerControls)));
 					__handler_UpdatePlayerTurnToCamera = gcnew NetScriptFramework::EventHook<UpdatePlayerTurnToCameraEventArgs^>(NetScriptFramework::EventHookFlags::None, "UpdatePlayerTurnToCamera", gcnew NetScriptFramework::EventHookParameters<UpdatePlayerTurnToCameraEventArgs^>(__VIDS::VID49968.Value+0x93, 7, 7, "40 38 BB DC 00 00 00", gcnew System::Func<NetScriptFramework::CPURegisters^, UpdatePlayerTurnToCameraEventArgs^>(__before_UpdatePlayerTurnToCamera), gcnew System::Action<NetScriptFramework::CPURegisters^, UpdatePlayerTurnToCameraEventArgs^>(__after_UpdatePlayerTurnToCamera)));
@@ -1875,7 +1888,6 @@ namespace NetScriptFramework
 					// These events have no mapped native sites on this layout.
 					__handler_ShadowCullingBegin = gcnew NetScriptFramework::Event<ShadowCullingBeginEventArgs^>("ShadowCullingBegin");
 					__handler_ShadowCullingEnd = gcnew NetScriptFramework::Event<ShadowCullingEndEventArgs^>("ShadowCullingEnd");
-					__handler_UpdateCamera = gcnew NetScriptFramework::Event<UpdateCameraEventArgs^>("UpdateCamera");
 					__handler_UpdatedPlayerHeadtrack = gcnew NetScriptFramework::Event<UpdatedPlayerHeadtrackEventArgs^>("UpdatedPlayerHeadtrack");
 					__handler_UpdatePlayerControls = gcnew NetScriptFramework::Event<UpdatePlayerControlsEventArgs^>("UpdatePlayerControls");
 					__handler_UpdatePlayerTurnToCamera = gcnew NetScriptFramework::Event<UpdatePlayerTurnToCameraEventArgs^>("UpdatePlayerTurnToCamera");
