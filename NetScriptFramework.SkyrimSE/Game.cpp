@@ -257,15 +257,26 @@ namespace NetScriptFramework
 
 			if (_alloc != nullptr)
 			{
-				auto ptr = NetScriptFramework::Memory::ReadPointer(_alloc->Address, false);
-				if (ptr != System::IntPtr::Zero)
+				try
 				{
-					auto db = NetScriptFramework::Memory::ReadPointer(__VIDS::VID514145.Value, false) + 0xD0;
-					NetScriptFramework::Memory::InvokeCdecl(__VIDS::VID11275.Value, db, ptr);
+					auto ptr = NetScriptFramework::Memory::ReadPointer(_alloc->Address, false);
+					if (ptr != System::IntPtr::Zero)
+					{
+						auto releaseHandle = __VIDS::ReleaseModelHandle.TryGetValue();
+						if (releaseHandle.HasValue)
+							NetScriptFramework::Memory::InvokeCdecl(releaseHandle.Value, _alloc->Address);
+						else
+						{
+							auto db = NetScriptFramework::Memory::ReadPointer(__VIDS::VID514145.Value, false) + 0xD0;
+							NetScriptFramework::Memory::InvokeCdecl(__VIDS::VID11275.Value, db, ptr);
+						}
+					}
 				}
-
-				delete _alloc;
-				_alloc = nullptr;
+				finally
+				{
+					delete _alloc;
+					_alloc = nullptr;
+				}
 			}
 		}
 

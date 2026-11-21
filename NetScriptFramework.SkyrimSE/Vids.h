@@ -452,12 +452,16 @@ namespace NetScriptFramework
 			static NetScriptFramework::CachedVid VID524557;
 			static NetScriptFramework::CachedVid VID527999;
 
+		internal:
+			static NetScriptFramework::CachedVid ReleaseModelHandle;
+
 		private:
 			static void _Init1()
 			{
 				VID10878 = NetScriptFramework::CachedVid::TryInitialize(10878, 0, 0, nullptr);
 				VID11213 = NetScriptFramework::CachedVid::TryInitialize(11213, 0, 0, nullptr);
 				VID11275 = NetScriptFramework::CachedVid::TryInitialize(11275, 0, 0, nullptr);
+				ReleaseModelHandle = NetScriptFramework::CachedVid::TryInitialize(0x100000002ULL, 0, 0, nullptr);
 				VID11433 = NetScriptFramework::CachedVid::TryInitialize(11433, 0, 0, nullptr);
 				VID11435 = NetScriptFramework::CachedVid::TryInitialize(11435, 0, 0, nullptr);
 				VID11436 = NetScriptFramework::CachedVid::TryInitialize(11436, 0, 0, nullptr);
