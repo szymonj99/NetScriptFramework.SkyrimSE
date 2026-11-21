@@ -913,7 +913,12 @@ namespace NetScriptFramework
 				args->SourceActor = NetScriptFramework::MemoryObject::FromAddress<Actor^>(NetScriptFramework::Memory::ReadPointer(ctx->SP + 0x70, false));
 				args->TargetActor = NetScriptFramework::MemoryObject::FromAddress<Actor^>(ctx->BX);
 				args->ResultValue = NetScriptFramework::Memory::ReadInt32(ctx->BP + 0xD0, false);
-				args->Position = NetScriptFramework::MemoryObject::FromAddress<NiPoint3^>(NetScriptFramework::Memory::ReadPointer(ctx->BP - 0x68, false));
+				auto inlineOffset = __CVTS::CalculateDetectionPositionOffset.ValueSafe;
+				// Older GameInfo files use a pointer stored in the frame.
+				auto position = inlineOffset.HasValue
+					? ctx->BP + inlineOffset.Value
+					: NetScriptFramework::Memory::ReadPointer(ctx->BP - 0x68, false);
+				args->Position = NetScriptFramework::MemoryObject::FromAddress<NiPoint3^>(position);
 				return args;
 			}
 		private: static void __after_CalculateDetection(NetScriptFramework::CPURegisters^ ctx, CalculateDetectionEventArgs^ args)
@@ -1644,7 +1649,12 @@ namespace NetScriptFramework
 					gcnew NetScriptFramework::EventHookParameters<BarterMenuEventArgs^>(
 						"BarterMenu.Exit", __VIDS::VID50066, 0x19, 5, 5, "E8",
 						gcnew System::Func<NetScriptFramework::CPURegisters^, BarterMenuEventArgs^>(__before_BarterMenu_2), nullptr));
-				__handler_CalculateDetection = gcnew NetScriptFramework::EventHook<CalculateDetectionEventArgs^>(NetScriptFramework::EventHookFlags::None, "CalculateDetection", gcnew NetScriptFramework::EventHookParameters<CalculateDetectionEventArgs^>(__VIDS::VID41659.Value+0x52B, 6, 6, "8B 95 D0 00 00 00", gcnew System::Func<NetScriptFramework::CPURegisters^, CalculateDetectionEventArgs^>(__before_CalculateDetection), gcnew System::Action<NetScriptFramework::CPURegisters^, CalculateDetectionEventArgs^>(__after_CalculateDetection)));
+				__handler_CalculateDetection = gcnew NetScriptFramework::EventHook<CalculateDetectionEventArgs^>(
+					NetScriptFramework::EventHookFlags::None, "CalculateDetection",
+					gcnew NetScriptFramework::EventHookParameters<CalculateDetectionEventArgs^>(
+						"CalculateDetection", __VIDS::VID41659, 0x52B, 6, 6, "8B 95 D0 00 00 00",
+						gcnew System::Func<NetScriptFramework::CPURegisters^, CalculateDetectionEventArgs^>(__before_CalculateDetection),
+						gcnew System::Action<NetScriptFramework::CPURegisters^, CalculateDetectionEventArgs^>(__after_CalculateDetection)));
 				__handler_CalculateFormGoldValue = gcnew NetScriptFramework::EventHook<CalculateFormGoldValueEventArgs^>(
 					NetScriptFramework::EventHookFlags::None, "CalculateFormGoldValue",
 					gcnew NetScriptFramework::EventHookParameters<CalculateFormGoldValueEventArgs^>(

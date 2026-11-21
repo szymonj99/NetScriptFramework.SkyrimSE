@@ -1429,9 +1429,15 @@ namespace NetScriptFramework
 				CVT322 = NetScriptFramework::CachedLibValue(ls[322]);
 				CVT323 = NetScriptFramework::CachedLibValue(ls[323]);
 				CVT324 = NetScriptFramework::CachedLibValue(ls[324]);
+				if (ls->Count > CalculateDetectionPositionCvt)
+					CalculateDetectionPositionOffset = NetScriptFramework::CachedLibValue(ls[CalculateDetectionPositionCvt]);
 			}
 
 		internal:
+			// Optional frame offset of the inline NiPoint3 for CalculateDetection.
+			literal int CalculateDetectionPositionCvt = 325;
+			static NetScriptFramework::CachedLibValue CalculateDetectionPositionOffset;
+
 			static void Init()
 			{
 				_Init1();
