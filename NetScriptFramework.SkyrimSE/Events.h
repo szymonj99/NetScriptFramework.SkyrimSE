@@ -995,8 +995,9 @@ namespace NetScriptFramework
 		private: static CalculateMagicCostEventArgs^ __before_CalculateMagicCost(NetScriptFramework::CPURegisters^ ctx)
 			{
 				CalculateMagicCostEventArgs^ args = gcnew CalculateMagicCostEventArgs();
-				args->Caster = safe_cast<Actor^>(NetScriptFramework::MemoryObject::FromAddress<TESObjectREFR^>(ctx->BP));
-				args->Item = NetScriptFramework::MemoryObject::FromAddress<MagicItem^>(ctx->DI);
+				// Resolve the concrete vtables. A partial GameInfo can leave either object unmapped.
+				args->Caster = dynamic_cast<Actor^>(NetScriptFramework::VirtualObject::FromAddress(ctx->BP));
+				args->Item = dynamic_cast<MagicItem^>(NetScriptFramework::VirtualObject::FromAddress(ctx->DI));
 				System::IntPtr addrOfValue = ctx->SP + 0x40;
 				args->BaseValue = NetScriptFramework::Memory::ReadFloat(addrOfValue, false);
 				if(ctx->BP != System::IntPtr::Zero)
@@ -1666,7 +1667,12 @@ namespace NetScriptFramework
 					gcnew NetScriptFramework::EventHookParameters<CalculateFormGoldValueEventArgs^>(
 						"CalculateFormGoldValue.3", __VIDS::VID14799, 0x95, 5, 5, "48 83 C4 30 5B",
 						gcnew System::Func<NetScriptFramework::CPURegisters^, CalculateFormGoldValueEventArgs^>(__before_CalculateFormGoldValue_3), gcnew System::Action<NetScriptFramework::CPURegisters^, CalculateFormGoldValueEventArgs^>(__after_CalculateFormGoldValue_3)));
-				__handler_CalculateMagicCost = gcnew NetScriptFramework::EventHook<CalculateMagicCostEventArgs^>(NetScriptFramework::EventHookFlags::AlwaysRun, "CalculateMagicCost", gcnew NetScriptFramework::EventHookParameters<CalculateMagicCostEventArgs^>(__VIDS::VID11213.Value+0xC6, 0x1A, 0, "48 85 ED", gcnew System::Func<NetScriptFramework::CPURegisters^, CalculateMagicCostEventArgs^>(__before_CalculateMagicCost), gcnew System::Action<NetScriptFramework::CPURegisters^, CalculateMagicCostEventArgs^>(__after_CalculateMagicCost)));
+				__handler_CalculateMagicCost = gcnew NetScriptFramework::EventHook<CalculateMagicCostEventArgs^>(
+					NetScriptFramework::EventHookFlags::AlwaysRun, "CalculateMagicCost",
+					gcnew NetScriptFramework::EventHookParameters<CalculateMagicCostEventArgs^>(
+						"CalculateMagicCost", __VIDS::VID11213, 0xC6, 0x1A, 0, "48 85 ED",
+						gcnew System::Func<NetScriptFramework::CPURegisters^, CalculateMagicCostEventArgs^>(__before_CalculateMagicCost),
+						gcnew System::Action<NetScriptFramework::CPURegisters^, CalculateMagicCostEventArgs^>(__after_CalculateMagicCost)));
 				__handler_CameraStateChanging = gcnew NetScriptFramework::EventHook<CameraStateChangingEventArgs^>(
 					NetScriptFramework::EventHookFlags::None, "CameraStateChanging",
 					gcnew NetScriptFramework::EventHookParameters<CameraStateChangingEventArgs^>(
