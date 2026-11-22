@@ -1389,8 +1389,9 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 		{
 			get
 			{
-				var addr = this.Address + 0xA0;
-				addr = NetScriptFramework.Memory.ReadPointer(addr);
+				var selfptr = this.Cast<MagicTarget>();
+				if (selfptr == System.IntPtr.Zero) throw new System.NotSupportedException("MagicTarget subobject is missing from GameInfo.");
+				var addr = NetScriptFramework.Memory.ReadPointer(selfptr + 0x8);
 				return NetScriptFramework.MemoryObject.FromAddress<MagicTarget.SpellDispelData>(addr);
 			}
 		}
@@ -1399,8 +1400,9 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 		{
 			get
 			{
-				var addr = this.Address + 0xA8;
-				return NetScriptFramework.Memory.ReadUInt8(addr);
+				var selfptr = this.Cast<MagicTarget>();
+				if (selfptr == System.IntPtr.Zero) throw new System.NotSupportedException("MagicTarget subobject is missing from GameInfo.");
+				return NetScriptFramework.Memory.ReadUInt8(selfptr + 0x10);
 			}
 		}
 
@@ -3669,7 +3671,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 			if (t == typeof(NiRefObject)) offset = 0x20;
 			if (t == typeof(BSTEventSink<BSAnimationGraphEvent>)) offset = 0x30;
 			if (t == typeof(IAnimationGraphManagerHolder)) offset = 0x38;
-			if (t == typeof(MagicTarget)) offset = 0x98;
+			if (t == typeof(MagicTarget)) return this.CastRegistered<MagicTarget>();
 			if (t == typeof(ActorValueOwner)) offset = 0xB0;
 			if (t == typeof(ActorState)) offset = 0xB8;
 			if (t == typeof(IMovementState)) offset = 0xB8;
@@ -224794,8 +224796,9 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 		{
 			get
 			{
-				var addr = this.Address + 0xA0;
-				addr = NetScriptFramework.Memory.ReadPointer(addr);
+				var selfptr = this.Cast<MagicTarget>();
+				if (selfptr == System.IntPtr.Zero) throw new System.NotSupportedException("MagicTarget subobject is missing from GameInfo.");
+				var addr = NetScriptFramework.Memory.ReadPointer(selfptr + 0x8);
 				return NetScriptFramework.MemoryObject.FromAddress<MagicTarget.SpellDispelData>(addr);
 			}
 		}
@@ -224804,8 +224807,9 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 		{
 			get
 			{
-				var addr = this.Address + 0xA8;
-				return NetScriptFramework.Memory.ReadUInt8(addr);
+				var selfptr = this.Cast<MagicTarget>();
+				if (selfptr == System.IntPtr.Zero) throw new System.NotSupportedException("MagicTarget subobject is missing from GameInfo.");
+				return NetScriptFramework.Memory.ReadUInt8(selfptr + 0x10);
 			}
 		}
 
@@ -227075,7 +227079,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 			if (t == typeof(NiRefObject)) offset = 0x20;
 			if (t == typeof(BSTEventSink<BSAnimationGraphEvent>)) offset = 0x30;
 			if (t == typeof(IAnimationGraphManagerHolder)) offset = 0x38;
-			if (t == typeof(MagicTarget)) offset = 0x98;
+			if (t == typeof(MagicTarget)) return this.CastRegistered<MagicTarget>();
 			if (t == typeof(ActorValueOwner)) offset = 0xB0;
 			if (t == typeof(ActorState)) offset = 0xB8;
 			if (t == typeof(IMovementState)) offset = 0xB8;
@@ -333409,8 +333413,9 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 		{
 			get
 			{
-				var addr = this.Address + 0xA0;
-				addr = NetScriptFramework.Memory.ReadPointer(addr);
+				var selfptr = this.Cast<MagicTarget>();
+				if (selfptr == System.IntPtr.Zero) throw new System.NotSupportedException("MagicTarget subobject is missing from GameInfo.");
+				var addr = NetScriptFramework.Memory.ReadPointer(selfptr + 0x8);
 				return NetScriptFramework.MemoryObject.FromAddress<MagicTarget.SpellDispelData>(addr);
 			}
 		}
@@ -333419,8 +333424,9 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 		{
 			get
 			{
-				var addr = this.Address + 0xA8;
-				return NetScriptFramework.Memory.ReadUInt8(addr);
+				var selfptr = this.Cast<MagicTarget>();
+				if (selfptr == System.IntPtr.Zero) throw new System.NotSupportedException("MagicTarget subobject is missing from GameInfo.");
+				return NetScriptFramework.Memory.ReadUInt8(selfptr + 0x10);
 			}
 		}
 
@@ -336762,7 +336768,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 			if (t == typeof(NiRefObject)) offset = 0x20;
 			if (t == typeof(BSTEventSink<BSAnimationGraphEvent>)) offset = 0x30;
 			if (t == typeof(IAnimationGraphManagerHolder)) offset = 0x38;
-			if (t == typeof(MagicTarget)) offset = 0x98;
+			if (t == typeof(MagicTarget)) return this.CastRegistered<MagicTarget>();
 			if (t == typeof(ActorValueOwner)) offset = 0xB0;
 			if (t == typeof(ActorState)) offset = 0xB8;
 			if (t == typeof(IMovementState)) offset = 0xB8;
