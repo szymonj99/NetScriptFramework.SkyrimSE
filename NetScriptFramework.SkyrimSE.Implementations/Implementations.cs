@@ -3691,13 +3691,12 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 			if (t == typeof(BSTEventSink<BSAnimationGraphEvent>)) offset = 0x30;
 			if (t == typeof(IAnimationGraphManagerHolder)) offset = 0x38;
 			if (t == typeof(MagicTarget)) return this.CastRegistered<MagicTarget>();
-			if (t == typeof(ActorValueOwner)) offset = 0xB0;
-			if (t == typeof(ActorState)) offset = 0xB8;
-			if (t == typeof(IMovementState)) offset = 0xB8;
-			if (t == typeof(IMovementInterface)) offset = 0xB8;
-			if (t == typeof(BSTEventSink<BSTransformDeltaEvent>)) offset = 0xC8;
-			if (t == typeof(BSTEventSink<bhkCharacterMoveFinishEvent>)) offset = 0xD0;
-			if (t == typeof(IPostAnimationChannelUpdateFunctor)) offset = 0xD8;
+			if (t == typeof(ActorValueOwner)) return this.CastRegistered<ActorValueOwner>();
+			if (t == typeof(ActorState) || t == typeof(IMovementState) || t == typeof(IMovementInterface))
+				return this.CastRegistered<ActorState>();
+			if (t == typeof(BSTEventSink<BSTransformDeltaEvent>)) return this.CastRegistered<BSTEventSink<BSTransformDeltaEvent>>();
+			if (t == typeof(BSTEventSink<bhkCharacterMoveFinishEvent>)) return this.CastRegistered<BSTEventSink<bhkCharacterMoveFinishEvent>>();
+			if (t == typeof(IPostAnimationChannelUpdateFunctor)) return this.CastRegistered<IPostAnimationChannelUpdateFunctor>();
 			if (offset.HasValue) return this.Address + offset.Value;
 			return System.IntPtr.Zero;
 		}
@@ -227099,13 +227098,12 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 			if (t == typeof(BSTEventSink<BSAnimationGraphEvent>)) offset = 0x30;
 			if (t == typeof(IAnimationGraphManagerHolder)) offset = 0x38;
 			if (t == typeof(MagicTarget)) return this.CastRegistered<MagicTarget>();
-			if (t == typeof(ActorValueOwner)) offset = 0xB0;
-			if (t == typeof(ActorState)) offset = 0xB8;
-			if (t == typeof(IMovementState)) offset = 0xB8;
-			if (t == typeof(IMovementInterface)) offset = 0xB8;
-			if (t == typeof(BSTEventSink<BSTransformDeltaEvent>)) offset = 0xC8;
-			if (t == typeof(BSTEventSink<bhkCharacterMoveFinishEvent>)) offset = 0xD0;
-			if (t == typeof(IPostAnimationChannelUpdateFunctor)) offset = 0xD8;
+			if (t == typeof(ActorValueOwner)) return this.CastRegistered<ActorValueOwner>();
+			if (t == typeof(ActorState) || t == typeof(IMovementState) || t == typeof(IMovementInterface))
+				return this.CastRegistered<ActorState>();
+			if (t == typeof(BSTEventSink<BSTransformDeltaEvent>)) return this.CastRegistered<BSTEventSink<BSTransformDeltaEvent>>();
+			if (t == typeof(BSTEventSink<bhkCharacterMoveFinishEvent>)) return this.CastRegistered<BSTEventSink<bhkCharacterMoveFinishEvent>>();
+			if (t == typeof(IPostAnimationChannelUpdateFunctor)) return this.CastRegistered<IPostAnimationChannelUpdateFunctor>();
 			if (offset.HasValue) return this.Address + offset.Value;
 			return System.IntPtr.Zero;
 		}
@@ -336788,13 +336786,12 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 			if (t == typeof(BSTEventSink<BSAnimationGraphEvent>)) offset = 0x30;
 			if (t == typeof(IAnimationGraphManagerHolder)) offset = 0x38;
 			if (t == typeof(MagicTarget)) return this.CastRegistered<MagicTarget>();
-			if (t == typeof(ActorValueOwner)) offset = 0xB0;
-			if (t == typeof(ActorState)) offset = 0xB8;
-			if (t == typeof(IMovementState)) offset = 0xB8;
-			if (t == typeof(IMovementInterface)) offset = 0xB8;
-			if (t == typeof(BSTEventSink<BSTransformDeltaEvent>)) offset = 0xC8;
-			if (t == typeof(BSTEventSink<bhkCharacterMoveFinishEvent>)) offset = 0xD0;
-			if (t == typeof(IPostAnimationChannelUpdateFunctor)) offset = 0xD8;
+			if (t == typeof(ActorValueOwner)) return this.CastRegistered<ActorValueOwner>();
+			if (t == typeof(ActorState) || t == typeof(IMovementState) || t == typeof(IMovementInterface))
+				return this.CastRegistered<ActorState>();
+			if (t == typeof(BSTEventSink<BSTransformDeltaEvent>)) return this.CastRegistered<BSTEventSink<BSTransformDeltaEvent>>();
+			if (t == typeof(BSTEventSink<bhkCharacterMoveFinishEvent>)) return this.CastRegistered<BSTEventSink<bhkCharacterMoveFinishEvent>>();
+			if (t == typeof(IPostAnimationChannelUpdateFunctor)) return this.CastRegistered<IPostAnimationChannelUpdateFunctor>();
 			if (t == typeof(BSTEventSink<MenuOpenCloseEvent>)) offset = 0x2B0;
 			if (t == typeof(BSTEventSink<MenuModeChangeEvent>)) offset = 0x2B8;
 			if (t == typeof(BSTEventSink<UserEventEnabledEvent>)) offset = 0x2C0;
