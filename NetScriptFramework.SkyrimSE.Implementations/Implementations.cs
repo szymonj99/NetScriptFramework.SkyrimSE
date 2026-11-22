@@ -4,6 +4,25 @@ using System.Linq;
 
 namespace NetScriptFramework.SkyrimSE.Implementations
 {
+	internal static class ActorLayout
+	{
+		private static readonly NetScriptFramework.CachedFid ProcessOffset;
+		internal static readonly NetScriptFramework.CachedFid StateDataOffset;
+		internal static readonly NetScriptFramework.CachedFid RaceOffset;
+
+		static ActorLayout()
+		{
+			ProcessOffset = NetScriptFramework.CachedFid.TryInitialize(810159, 39);
+			StateDataOffset = NetScriptFramework.CachedFid.TryInitialize(810159, 30);
+			RaceOffset = NetScriptFramework.CachedFid.TryInitialize(810159, 74);
+		}
+
+		internal static System.IntPtr GetProcessAddress(System.IntPtr actor)
+		{
+			return NetScriptFramework.Memory.ReadPointer(actor + ProcessOffset.Value);
+		}
+	}
+
 	internal sealed class impl_0001__SECURITY_FUNCTION_TABLE_A : NetScriptFramework.MemoryObject, _SECURITY_FUNCTION_TABLE_A
 	{
 		public override System.Collections.Generic.IReadOnlyList<NetScriptFramework.GameInfo.GameTypeInstanceInfo> TypeInfos { get { return NetScriptFramework.Main.GameInfo.GetTypeInstanceInfos(1); } }
@@ -1534,7 +1553,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 
 			ulong mask = (ulong)1 << size;
 			mask--;
-			ulong p = NetScriptFramework.Memory.ReadUInt64(this.Address + 0xC0);
+			ulong p = NetScriptFramework.Memory.ReadUInt64(this.Address + ActorLayout.StateDataOffset.Value);
 			p >>= index;
 			p &= mask;
 			return p;
@@ -1556,10 +1575,11 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 			value <<= index;
 			mask <<= index;
 
-			ulong p = NetScriptFramework.Memory.ReadUInt64(this.Address + 0xC0);
+			var addr = this.Address + ActorLayout.StateDataOffset.Value;
+			ulong p = NetScriptFramework.Memory.ReadUInt64(addr);
 			p &= ~mask;
 			p |= value;
-			NetScriptFramework.Memory.WriteUInt64(this.Address + 0xC0, p);
+			NetScriptFramework.Memory.WriteUInt64(addr, p);
 		}
 
 		ActorLifeStates ActorState.@LifeState
@@ -1625,8 +1645,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 		{
 			get
 			{
-				var addr = this.Address + 0xF0;
-				addr = NetScriptFramework.Memory.ReadPointer(addr);
+				var addr = ActorLayout.GetProcessAddress(this.Address);
 				return NetScriptFramework.MemoryObject.FromAddress<ActorProcess>(addr);
 			}
 		}
@@ -1851,7 +1870,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 		{
 			get
 			{
-				var addr = this.Address + 0x1F0;
+				var addr = this.Address + ActorLayout.RaceOffset.Value;
 				addr = NetScriptFramework.Memory.ReadPointer(addr);
 				return NetScriptFramework.MemoryObject.FromAddress<TESRace>(addr);
 			}
@@ -2105,7 +2124,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 			var selfptr = this.Cast<Actor>();
 			if(selfptr == System.IntPtr.Zero) throw new System.NullReferenceException("this");
 
-			var process = NetScriptFramework.Memory.ReadPointer(this.Address + 0xF0);
+			var process = ActorLayout.GetProcessAddress(selfptr);
 			if(process == System.IntPtr.Zero)
 				return;
 
@@ -3025,7 +3044,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 			{
 				var selfptr = this.Cast<Actor>();
 				if(selfptr == System.IntPtr.Zero) throw new System.NullReferenceException("this");
-				var ptr = NetScriptFramework.Memory.ReadPointer(this.Address + 0xF0);
+				var ptr = ActorLayout.GetProcessAddress(selfptr);
 				if(ptr != System.IntPtr.Zero)
 				{
 					ptr = NetScriptFramework.Memory.InvokeCdecl(__VIDS.VID38826.Value, ptr);
@@ -3247,7 +3266,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 				tself.ClearLookAtPosition();
 				return;
 			}
-			var process = NetScriptFramework.Memory.ReadPointer(this.Address + 0xF0);
+			var process = ActorLayout.GetProcessAddress(selfptr);
 			if(process == System.IntPtr.Zero)
 				return;
 			var race = tself.Race;
@@ -224941,7 +224960,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 
 			ulong mask = (ulong)1 << size;
 			mask--;
-			ulong p = NetScriptFramework.Memory.ReadUInt64(this.Address + 0xC0);
+			ulong p = NetScriptFramework.Memory.ReadUInt64(this.Address + ActorLayout.StateDataOffset.Value);
 			p >>= index;
 			p &= mask;
 			return p;
@@ -224963,10 +224982,11 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 			value <<= index;
 			mask <<= index;
 
-			ulong p = NetScriptFramework.Memory.ReadUInt64(this.Address + 0xC0);
+			var addr = this.Address + ActorLayout.StateDataOffset.Value;
+			ulong p = NetScriptFramework.Memory.ReadUInt64(addr);
 			p &= ~mask;
 			p |= value;
-			NetScriptFramework.Memory.WriteUInt64(this.Address + 0xC0, p);
+			NetScriptFramework.Memory.WriteUInt64(addr, p);
 		}
 
 		ActorLifeStates ActorState.@LifeState
@@ -225032,8 +225052,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 		{
 			get
 			{
-				var addr = this.Address + 0xF0;
-				addr = NetScriptFramework.Memory.ReadPointer(addr);
+				var addr = ActorLayout.GetProcessAddress(this.Address);
 				return NetScriptFramework.MemoryObject.FromAddress<ActorProcess>(addr);
 			}
 		}
@@ -225258,7 +225277,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 		{
 			get
 			{
-				var addr = this.Address + 0x1F0;
+				var addr = this.Address + ActorLayout.RaceOffset.Value;
 				addr = NetScriptFramework.Memory.ReadPointer(addr);
 				return NetScriptFramework.MemoryObject.FromAddress<TESRace>(addr);
 			}
@@ -225512,7 +225531,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 			var selfptr = this.Cast<Actor>();
 			if(selfptr == System.IntPtr.Zero) throw new System.NullReferenceException("this");
 
-			var process = NetScriptFramework.Memory.ReadPointer(this.Address + 0xF0);
+			var process = ActorLayout.GetProcessAddress(selfptr);
 			if(process == System.IntPtr.Zero)
 				return;
 
@@ -226432,7 +226451,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 			{
 				var selfptr = this.Cast<Actor>();
 				if(selfptr == System.IntPtr.Zero) throw new System.NullReferenceException("this");
-				var ptr = NetScriptFramework.Memory.ReadPointer(this.Address + 0xF0);
+				var ptr = ActorLayout.GetProcessAddress(selfptr);
 				if(ptr != System.IntPtr.Zero)
 				{
 					ptr = NetScriptFramework.Memory.InvokeCdecl(__VIDS.VID38826.Value, ptr);
@@ -226654,7 +226673,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 				tself.ClearLookAtPosition();
 				return;
 			}
-			var process = NetScriptFramework.Memory.ReadPointer(this.Address + 0xF0);
+			var process = ActorLayout.GetProcessAddress(selfptr);
 			if(process == System.IntPtr.Zero)
 				return;
 			var race = tself.Race;
@@ -333558,7 +333577,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 
 			ulong mask = (ulong)1 << size;
 			mask--;
-			ulong p = NetScriptFramework.Memory.ReadUInt64(this.Address + 0xC0);
+			ulong p = NetScriptFramework.Memory.ReadUInt64(this.Address + ActorLayout.StateDataOffset.Value);
 			p >>= index;
 			p &= mask;
 			return p;
@@ -333580,10 +333599,11 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 			value <<= index;
 			mask <<= index;
 
-			ulong p = NetScriptFramework.Memory.ReadUInt64(this.Address + 0xC0);
+			var addr = this.Address + ActorLayout.StateDataOffset.Value;
+			ulong p = NetScriptFramework.Memory.ReadUInt64(addr);
 			p &= ~mask;
 			p |= value;
-			NetScriptFramework.Memory.WriteUInt64(this.Address + 0xC0, p);
+			NetScriptFramework.Memory.WriteUInt64(addr, p);
 		}
 
 		ActorLifeStates ActorState.@LifeState
@@ -333649,8 +333669,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 		{
 			get
 			{
-				var addr = this.Address + 0xF0;
-				addr = NetScriptFramework.Memory.ReadPointer(addr);
+				var addr = ActorLayout.GetProcessAddress(this.Address);
 				return NetScriptFramework.MemoryObject.FromAddress<ActorProcess>(addr);
 			}
 		}
@@ -333875,7 +333894,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 		{
 			get
 			{
-				var addr = this.Address + 0x1F0;
+				var addr = this.Address + ActorLayout.RaceOffset.Value;
 				addr = NetScriptFramework.Memory.ReadPointer(addr);
 				return NetScriptFramework.MemoryObject.FromAddress<TESRace>(addr);
 			}
@@ -334129,7 +334148,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 			var selfptr = this.Cast<Actor>();
 			if(selfptr == System.IntPtr.Zero) throw new System.NullReferenceException("this");
 
-			var process = NetScriptFramework.Memory.ReadPointer(this.Address + 0xF0);
+			var process = ActorLayout.GetProcessAddress(selfptr);
 			if(process == System.IntPtr.Zero)
 				return;
 
@@ -335049,7 +335068,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 			{
 				var selfptr = this.Cast<Actor>();
 				if(selfptr == System.IntPtr.Zero) throw new System.NullReferenceException("this");
-				var ptr = NetScriptFramework.Memory.ReadPointer(this.Address + 0xF0);
+				var ptr = ActorLayout.GetProcessAddress(selfptr);
 				if(ptr != System.IntPtr.Zero)
 				{
 					ptr = NetScriptFramework.Memory.InvokeCdecl(__VIDS.VID38826.Value, ptr);
@@ -335271,7 +335290,7 @@ namespace NetScriptFramework.SkyrimSE.Implementations
 				tself.ClearLookAtPosition();
 				return;
 			}
-			var process = NetScriptFramework.Memory.ReadPointer(this.Address + 0xF0);
+			var process = ActorLayout.GetProcessAddress(selfptr);
 			if(process == System.IntPtr.Zero)
 				return;
 			var race = tself.Race;
